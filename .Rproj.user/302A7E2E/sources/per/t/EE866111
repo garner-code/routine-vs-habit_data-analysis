@@ -1,0 +1,26 @@
+{
+    "id": "EE866111",
+    "path": "C:/Users/kgarner/projects/routine-vs-habit_data-analysis/src/run_wrangling.R",
+    "project_path": "src/run_wrangling.R",
+    "type": "r_source",
+    "hash": "1887526525",
+    "contents": "",
+    "dirty": false,
+    "created": 1775807170666.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "82,63",
+        "scrollLine": "54"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1775818224,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1775818224183,
+    "read_only": false,
+    "read_only_alternatives": []
+}
