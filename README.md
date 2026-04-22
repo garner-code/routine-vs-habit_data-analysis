@@ -120,29 +120,7 @@ This script:
    - `data_trl_.csv` — one row per trial with accuracy and error summaries
    - `data_avg-ss_.csv` / `data_avg_.csv` — per-participant averages by sub-session and session
 
-### 2. Wrangle survey data (FFMQ)
 
-```r
-source("src/run_wrangling_survey.R")
-```
-
-Scores the Five Facet Mindfulness Questionnaire, computes sub-scale totals (Observing, Describing, Acting with Awareness, Non-judging, Non-reactivity), and saves results to `res/<exp>_svy_.csv`.
-
-### 3. Wrangle working memory task data
-
-```r
-source("src/run_wrangling_wmt.R")
-```
-
-Loads match-to-sample (MTS) trial data, computes accuracy and mean RT by condition, and saves to `res/<exp>_mts_.csv` and `res/<exp>_mts_avg_.csv`.
-
-### 4. Visualise results
-
-```r
-source("src/vis_data.R")
-```
-
-Generates a set of PDF figures saved to `fig/`. Figures include violin plots, scatter plots with regression lines, and density plots for accuracy, setting errors, response time, and learning onset (k4) as a function of training group and trial type.
 
 ## Key Metrics
 
