@@ -20,6 +20,7 @@ source(paste(here(), "src", "get_reclicks.R", sep="/"))
 # test changes, or when you test participants on different subsets of the task phases
 exp <- 'data' # data folder
 sess <- c("ses-learn-uncertainty","ses-main-task") # we want data from
+sv_name <- 'routine_vs_habit' # name of the project, for labelling outputs.
 # these sessions
 
 ### paths
@@ -69,7 +70,7 @@ for (sub in subs) {
   for (ses in sess) {
 
     train_type <- NA
-    context_one_doors <- NA # KG: come back to whether need these
+ #   context_one_doors <- NA # KG: come back to whether need these
     train_doors <- NA # KG: come back to whether need these
 
     data <- get_data(data_path, exp, sub, ses, train_type, train_doors) # load and format raw data
@@ -79,18 +80,19 @@ for (sub in subs) {
 
 grp_data <- grp_data %>% mutate(door_nc = case_when(door_cc==1 ~ 0, door_oc == 1 ~ 0, .default=1), .after="door_oc")
 
-
+grp_data <- get_rts(grp_data) # calculate RTs and add to the data frame
 grp_data <- get_task_jumps(grp_data) # now calculate task_jumps per trial
 grp_data <- get_reclicks(grp_data) # and now we calculate reclicks
 
 # save the formatted data
-fnl <- file.path(project_path, "res", paste(paste(exp, "evt", sep = "_"), ".csv", sep = ""))
+fnl <- file.path(project_path, "res", paste(paste(sv_name, "evt", sep = "_"), ".csv", sep = ""))
 write_csv(grp_data, fnl)
 
 
 ### extract trial averages that we want from the data
 # by trial
 res <- grp_data %>%
+  mutate(block = str_extract(block, "(?<=b-)[a-z]+")) %>%
   arrange(sub, ses, subses, t, block, context, train_type) %>%
   group_by(sub, ses, subses, t, block, context, train_type) %>%
   summarise(
@@ -103,20 +105,48 @@ res <- grp_data %>%
     reclicks = first(reclicks),
     accuracy = n_cc / n_clicks,
     setting_errors = n_oc / n_clicks,
-    general_errors = n_nc / n_clicks,
+    general_errors = n_nc / n_clicks
 ) %>% ungroup()
 
-# here KG will write code to get the RT data that we want
+# now lets get the RT data we want
+max_cutoff <- 2.0 # anything less than 2 is weird
+sd_cut <- 2.5 # anything more than 2.5 SDs above the mean is also weird
+rt_res <- grp_data %>%
+  filter(start_rt < max_cutoff,
+         press_duration < max_cutoff) %>%
+  mutate(block = str_extract(block, "(?<=b-)[a-z]+")) %>%
+  arrange(sub, ses, subses, t, block, context, train_type) %>%
+  group_by(sub, ses, subses, block, context, train_type) %>%
+  mutate(mean_rt = mean(start_rt, na.rm = TRUE),
+         sd_rt = sd(start_rt, na.rm = TRUE),
+         rt_cut_off = mean_rt + sd_cut * sd_rt,
+         rt = ifelse(start_rt > rt_cut_off, NA, start_rt),
+         mean_press = mean(press_duration, na.rm = TRUE),
+         sd_press = sd(press_duration, na.rm = TRUE),
+         press_cut_off = mean_press + sd_cut * sd_press,
+         dur = ifelse(press_duration > press_cut_off, NA, press_duration)
+         ) %>%
+  ungroup() %>%
+  group_by(sub, ses, subses, t, block, context, train_type) %>%
+  summarise(n_rt_outliers = sum(is.na(rt)),
+            rt = mean(rt, na.rm = TRUE),
+            n_dur_outliers = sum(is.na(dur)),
+            dur = mean(dur, na.rm = TRUE),
+            N = n()) %>%
+  ungroup()
 
-fnl <- file.path(project_path, "res", paste(paste(exp, "trl", sep = "_"), ".csv", sep = ""))
+# and put the data back together
+res <- res %>%
+  left_join(rt_res, by = c("sub", "ses", "subses", "t", "block", "context", "train_type"))
+
+fnl <- file.path(project_path, "res", paste(paste(sv_name, "trl", sep = "_"), ".csv", sep = ""))
 write_csv(res, fnl)
 
 # now what I want to do is provide the condition level summary statistics
 
 summary_stats <- res %>%
-  mutate(block = str_extract(block, "(?<=b-)[a-z]+")) %>%
   group_by(sub, ses, context, block, switch, train_type) %>%
-  select(accuracy, setting_errors, general_errors, task_jumps, reclicks) %>%
+  select(accuracy, setting_errors, general_errors, task_jumps, reclicks, rt, dur) %>%
   summarise(
     across(
       .cols = where(is.numeric),
@@ -124,9 +154,27 @@ summary_stats <- res %>%
       .names = "{.col}_{.fn}"
     )
   ) %>%
+  ungroup() %>%
+  group_by(sub, ses, block, switch, train_type) %>%
+  select(ends_with("mean")) %>%
+  summarise(
+    across(
+      .cols = where(is.numeric),
+      .fns = list(mean = ~mean(.x, na.rm = TRUE)),
+      .names = "{.col}"
+    )
+  ) %>%
   ungroup()
 
-fnms <- file.path(project_path, "res", paste(paste(exp, "avg", sep = "_"), ".csv", sep = ""))
-write_csv(summary_stats, fnnms)
+fnms <- file.path(project_path, "res", paste(paste(sv_name, "avg", sep = "_"), ".csv", sep = ""))
+write_csv(summary_stats, fnms)
 
-
+# now get the proportions of outliers removed for each participant
+outlier_proportions <- rt_res %>%
+  group_by(sub) %>%
+  summarise(
+    prop_rt_outliers = sum(n_rt_outliers) / sum(N),
+    prop_dur_outliers = sum(n_dur_outliers) / sum(N)
+  )
+o_fn <- file.path(project_path, "res", paste(paste(sv_name, "outliers", sep = "_"), ".csv", sep = ""))
+write_csv(outlier_proportions, o_fn)

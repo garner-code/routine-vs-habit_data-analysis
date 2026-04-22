@@ -167,7 +167,7 @@ get_data <- function(data_path, exp, sub, ses, train_type, train_doors) {
     resps <- resps %>%
       filter(door > 0) # we only care about samples in which people clicked on a door
 
-    ### find the important events - KG has amended to make simpler
+    ### find the important events
     resps <- resps %>%
       mutate(on = c(onset[[1]],
                     case_when(diff(open_d) != 0 ~ onset[2:length(onset)], # this code is losing trials where
@@ -184,6 +184,7 @@ get_data <- function(data_path, exp, sub, ses, train_type, train_doors) {
 
     # Now I want to filter for only the door selections
     resps <- resps %>% filter(open_d == 1) %>%
+      arrange(t) %>%
       group_by(t) %>%
       mutate(start = lag(off)) %>%
       ungroup()

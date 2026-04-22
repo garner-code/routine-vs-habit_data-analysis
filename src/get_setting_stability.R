@@ -6,7 +6,7 @@
 get_setting_stability <- function(data){
 
   data <- data %>%
-    group_by(sub,ses,t) %>%
+    group_by(sub,ses,block,t) %>%
     mutate(
       scca = case_when(diff(c(1,door_cc))>0~1,.default=0),
       sccb = case_when(diff(c(0,door_cc))>0~1,.default=0),

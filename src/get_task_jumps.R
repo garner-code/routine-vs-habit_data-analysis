@@ -76,6 +76,7 @@ get_task_jumps <- function(dat){
   dat <- dat %>% left_join(n_jumps %>% select(sub, ses, block, t, task_jumps), by=c('sub', 'ses', 'block', 't')) %>%
     mutate(task_jumps = ifelse(is.na(task_jumps), 0, task_jumps)) # replace NA with 0
   # return dat
+
   return(dat)
 }
 #

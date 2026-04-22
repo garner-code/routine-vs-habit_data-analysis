@@ -1,6 +1,7 @@
 ﻿res/*
 data/*
 .RData
-.Rhistory\
-.Rproj.user
+.Rhistory*
+.Rproj.user*
 .Rproj.user/*
+
