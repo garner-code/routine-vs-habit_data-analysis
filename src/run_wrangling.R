@@ -14,6 +14,7 @@ source(paste(here(), "src", "get_switch.R", sep="/"))
 source(paste(here(), "src", "get_data.R", sep="/"))
 source(paste(here(), "src", "get_task_jumps.R", sep="/"))
 source(paste(here(), "src", "get_reclicks.R", sep="/"))
+source(paste(here(), "src", "get_rts.R", sep="/"))
 ### settings
 
 # !you will want to update these settings a lot during piloting, when the task code or the way you
