@@ -35,8 +35,6 @@ if (!dir.exists(file.path(project_path, "res"))) {
   dir.create(file.path(project_path, "res"))
 }
 
-# !you will need to change the data path to match the location of OneDrive on your personal
-# computer
 file_path <- here()
 data_path <- paste(file_path, 'data', sep='/')
 

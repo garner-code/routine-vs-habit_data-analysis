@@ -6,7 +6,7 @@ all_files = dir(fullfile(data_folder, '**', '*n-back-log.mat'));
 
 % set up the saving info
 res_folder = 'C:\Users\kgarner\projects\routine-vs-habit_data-analysis\res\';
-res_file_name = 'n_back_data-block.csv';
+res_file_name = 'routine_vs_habit_n_back_data_block.csv';
 res_full_file_path = fullfile(res_folder, res_file_name);
 fid = fopen(res_full_file_path, 'w');
 fprintf(fid, 'sub,ses,block,hits,miss,fa,cor_rej\n');
