@@ -1,4 +1,4 @@
-get_data <- function(data_path, exp, sub, ses, train_type, train_doors) {
+get_data <- function(data_path, exp, sub, ses, train_type) {
   # reads in trial info and sample data from 'trls' and 'beh' files and formats into a
   # one-row-per-trial data frame
   success <- c()
@@ -82,8 +82,8 @@ get_data <- function(data_path, exp, sub, ses, train_type, train_doors) {
       resps <- do.call(rbind, resps)
       total_trials_per_block = max(trials$t)
       trials <- trials %>%
-        mutate(
-          block = factor(block, levels = blocks),
+        mutate( # re-number trials from the two conditions so that they have continuous t numbers
+          block = factor(block, levels = blocks), # e.g. 2 x st blocks with t = 1:40 each will now collectively have t=1:80
           t_global = t + (as.integer(block) - 1) * total_trials_per_block,
           t = t_global
         ) %>% select(!t_global)
@@ -96,49 +96,7 @@ get_data <- function(data_path, exp, sub, ses, train_type, train_doors) {
         ) %>% select(!t_global)
 
 
-  }
-    # } else { # KG: check this when testing the learning phase data
-    #   trials <- read.table(file.path(data_path, sub, ses, "beh", paste(sub, ses, "house-1",
-    #                                                                    "task-mforage_trls.tsv",
-    #                                                                    sep = "_"
-    #   )), header = TRUE)
-    #   trials <- rbind(trials, read.table(file.path(data_path, sub, ses, "beh", paste(sub,
-    #                                                                                  ses, "house-2", "task-mforage_trls.tsv",
-    #                                                                                  sep = "_"
-    #   )), header = TRUE))
-    #
-    #   resps_1 <- read.table(file.path(data_path, sub, ses, "beh", paste(sub, ses, "house-1",
-    #                                                                     "task-mforage_beh.tsv",
-    #                                                                     sep = "_"
-    #   )), header = TRUE)
-    #   resps_2 <- read.table(file.path(data_path, sub, ses, "beh", paste(sub, ses, "house-2",
-    #                                                                     "task-mforage_beh.tsv",
-    #                                                                     sep = "_"
-    #   )), header = TRUE)
-    # }
-
-    ### trim the data remove practice trials and reset trial numbers
-
-    # if (ses %in% c("ses-learn")){ # KG - check this when testing learning data
-    #
-    #   trials <- trials %>%
-    #     filter(t != 999)
-    #   if (version == "pilot-data-00" || version == "pilot-data-01") {
-    #     resps <- resps %>%
-    #       filter(cond != 3)
-    #     resps$t <- resps$t - 5
-    #   } else {
-    #     resps_1 <- resps_1 %>%
-    #       filter(cond != 3) # remove practice trials from house-1
-    #     resps_1$t <- resps_1$t - 5 # adjust the trial counter for house-1, now that practice trials are gone
-    #   }
-    #
-    #   resps_2$t <- resps_2$t + resps_1$t[nrow(resps_1)]
-    #   # resps_3$t <- resps_3$t + resps_2$t[nrow(resps_2)]
-    #
-    #   resps <- rbind(resps_1, resps_2) #, resps_3)
-    #   #resps$learn_phase <- c(rep(0,nrow(resps_1)),rep(0,nrow(resps_2)),rep(1,nrow(resps_3)))
-    # }
+    }
 
     resps <- resps %>%
       rename(context = cond) %>%

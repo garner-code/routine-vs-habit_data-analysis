@@ -15,6 +15,7 @@ source(paste(here(), "src", "get_data.R", sep="/"))
 source(paste(here(), "src", "get_task_jumps.R", sep="/"))
 source(paste(here(), "src", "get_reclicks.R", sep="/"))
 source(paste(here(), "src", "get_rts.R", sep="/"))
+source(paste(here(), "src", "get_TE.R", sep="/"))
 ### settings
 
 # !you will want to update these settings a lot during piloting, when the task code or the way you
@@ -71,10 +72,7 @@ for (sub in subs) {
   for (ses in sess) {
 
     train_type <- NA
- #   context_one_doors <- NA # KG: come back to whether need these
-    train_doors <- NA # KG: come back to whether need these
-
-    data <- get_data(data_path, exp, sub, ses, train_type, train_doors) # load and format raw data
+    data <- get_data(data_path, exp, sub, ses, train_type) # load and format raw data
     grp_data <- rbind(grp_data, data$resps) # add to the 'grp_data' data frame so we end up with all subjects and sessions in one spreadsheet
   }
 }
@@ -85,15 +83,17 @@ grp_data <- get_rts(grp_data) # calculate RTs and add to the data frame
 grp_data <- get_task_jumps(grp_data) # now calculate task_jumps per trial
 grp_data <- get_reclicks(grp_data) # and now we calculate reclicks
 
+# now rename the blocks so only one mt block (instead of b-mt1 & b-mt2). Do the same for the
+# single task blocks
+grp_data <- grp_data %>% mutate(block = str_extract(block, "(?<=b-)[a-z]+"))
+
 # save the formatted data
 fnl <- file.path(project_path, "res", paste(paste(sv_name, "evt", sep = "_"), ".csv", sep = ""))
 write_csv(grp_data, fnl)
 
-
 ### extract trial averages that we want from the data
 # by trial
 res <- grp_data %>%
-  mutate(block = str_extract(block, "(?<=b-)[a-z]+")) %>%
   arrange(sub, ses, subses, t, block, context, train_type) %>%
   group_by(sub, ses, subses, t, block, context, train_type) %>%
   summarise(
@@ -115,7 +115,6 @@ sd_cut <- 2.5 # anything more than 2.5 SDs above the mean is also weird
 rt_res <- grp_data %>%
   filter(start_rt < max_cutoff,
          press_duration < max_cutoff) %>%
-  mutate(block = str_extract(block, "(?<=b-)[a-z]+")) %>%
   arrange(sub, ses, subses, t, block, context, train_type) %>%
   group_by(sub, ses, subses, block, context, train_type) %>%
   mutate(mean_rt = mean(start_rt, na.rm = TRUE),
@@ -144,7 +143,23 @@ fnl <- file.path(project_path, "res", paste(paste(sv_name, "trl", sep = "_"), ".
 write_csv(res, fnl)
 
 # now what I want to do is provide the condition level summary statistics
+# calculate TE per subject x block x context
+# below calls functions that take the transition counts per trial
+# and then sums the transition matrices for each trial
+# rather than counting up transitions across trials.
+# this might mean that we lose the transitions as people move from
+# one trial to another, but this is fairest as the trials have
+# previously been stacked together in ways that are non-sequential
+# e.g. the two multitasking blocks.
+TE_summary <- grp_data %>%
+                group_by(sub, ses, block, context, switch) %>%
+                group_modify(~ get_TE_scores(.x)) %>%
+                ungroup() %>%
+  group_by(sub, ses, block, switch) %>%
+   summarise(M_sum_TE = mean(sum_TE), # sum_TE - is summing the row entropies for each context, and then taking the average of the two contexts
+             M_TE = mean(mu_TE)) # mean_TE - is taking the average of the row entropies for each context, and then averaging across contexts
 
+# get summary statistics for remaining key DVs
 summary_stats <- res %>%
   group_by(sub, ses, context, block, switch, train_type) %>%
   select(accuracy, setting_errors, general_errors, task_jumps, reclicks, rt, dur) %>%
@@ -166,6 +181,13 @@ summary_stats <- res %>%
     )
   ) %>%
   ungroup()
+
+# now add the TE scores
+summary_stats <- summary_stats %>%
+  left_join(TE_summary,
+            by=c('sub','ses','block','switch')
+            )
+
 
 fnms <- file.path(project_path, "res", paste(paste(sv_name, "avg", sep = "_"), ".csv", sep = ""))
 write_csv(summary_stats, fnms)
