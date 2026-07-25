@@ -118,9 +118,8 @@ get_data <- function(data_path, exp, sub, ses, train_type) {
     # find the time of the onset of each trial, to
     # be used to calculate the RT of the first response on every trial
     ons <- resps %>% #
-      group_by(sub, ses, t) %>%
-      summarise(trial_start = min(onset)) %>% # this gives the first timestamp for the trial
-      ungroup() #
+      # group_by(sub, ses, t) %>%
+      summarise(.by = c(sub, ses, t), trial_start = min(onset)) # this gives the first timestamp for the trial
 
     resps <- resps %>%
       filter(door > 0) # we only care about samples in which people clicked on a door
