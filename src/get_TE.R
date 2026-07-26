@@ -1,10 +1,3 @@
-get_TEs_for_all <- function(dat, n_doors = 16){
-  # this function applies the below functions to grp_data to get
-  # TE scores for all
-
-
-}
-
 
 H <- function(x){
   # to be applied over the rows of the matrix of transitions
