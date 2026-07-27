@@ -9,9 +9,10 @@ get_reclicks <- function(dat){
     filter(switch == 1) %>%
     group_by(sub, ses, block, t) %>%
     mutate(
-      is_new = !duplicated(door),
+      is_new = !duplicated(door) & door_oc == 1, # we care only about oc clicks, and we want to make sure they hit all 4 task relevant locations before we count their re-clicks.
       n_unique = cumsum(is_new),
-      keep = is_new | lag(cummax(n_unique >=4), default = FALSE)
+      keep = is_new | lag(cummax(n_unique >=4), default = FALSE),
+      keep = ifelse(door_cc == 1, TRUE, keep)
     ) %>%
     filter(keep) %>%
     summarise(
@@ -25,6 +26,7 @@ get_reclicks <- function(dat){
     filter(reclicks > 4) %>%
     mutate(reclicks = reclicks - 4) # to get the number over and
    # above the first 4 clicks (which are required to switch)
+
   dat <- dat %>% left_join(tmp, by = c("sub", "ses", "block", "t")) %>%
     mutate(reclicks = if_else(is.na(reclicks), 0L, reclicks))
 
