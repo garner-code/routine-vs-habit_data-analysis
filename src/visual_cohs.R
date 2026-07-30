@@ -1,3 +1,5 @@
+##################              COHS VISUAL              #######################
+#sadie lane, z5418956, 2026
 
 #histo
 histogram_cohs(raw_df, sub, auto)
