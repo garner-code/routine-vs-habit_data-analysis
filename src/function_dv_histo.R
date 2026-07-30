@@ -2,8 +2,7 @@
 #################  Sadie Lane 2026 histo dv function        ####################
 ################################################################################
 
-histogram <- function() {
-rainbow <- paletteer::paletteer_c("viridis::turbo", n = 85)
+histogram <- function(df, x, y, ymin, ymax) {
 df |>
   ggplot() +
   geom_col(

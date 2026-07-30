@@ -6,7 +6,6 @@ plot_style <- function() {
   label_sz <- 14
   theme_classic() +
     theme(
-      text = element_text(family = "mono"),
       plot.title = element_text(size = title_sz),
       axis.text.x = element_text(size = label_sz),
       axis.text.y = element_text(size = label_sz),
