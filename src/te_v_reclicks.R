@@ -25,6 +25,26 @@ trials <- read_csv(
 #now plot
 
 averages |>
+  filter(ses == 4, switch == 1) |>
+  ggplot(aes(x = reclicks_mean, y = M_sum_TE)) +
+  geom_jitter() +
+  geom_smooth(method = lm, linewidth = 1.25, se = F) +
+  facet_wrap( ~ block) +
+  theme_classic(base_size = 26) +
+  theme(axis.text.x = element_text(size = 22),
+        axis.text.y = element_text(size = 22),
+        axis.title.y = element_text(size = 24),
+        axis.title.x = element_text(size = 24),
+        plot.subtitle = element_text(size = 22)
+  )
+ggsave(
+  "reclicks_te_block_42ps.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8,
+)
+
+averages |>
   mutate(
     block = factor(
       block,
@@ -34,15 +54,25 @@ averages |>
   ) |>
   filter(ses == 4, switch == 1) |>
   ggplot(aes(x = reclicks_mean, y = TE)) +
+  filter(reclicks_mean < 8, M_sum_TE < 10) |>
+  ggplot(aes(x = reclicks_mean, y = M_sum_TE)) +
   geom_jitter() +
   geom_smooth(method = lm, formula = "y ~ x", linewidth = 1.25, se = F) +
   facet_wrap( ~ block ) +
   theme_classic() +
   plot_style() +
+  theme(axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title.y = element_text(size = 22),
+        axis.title.x = element_text(size = 22),
+        plot.title = element_text(size = 24),
+        plot.subtitle = element_text(size = 20)
+  ) +
   labs(
     x = "Mean Reclicks",
     y = "Transition Entropy"
   )
+
 ggsave(
   "reclicks_te.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
