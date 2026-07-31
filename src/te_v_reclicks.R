@@ -10,7 +10,7 @@ source("function_safe_se.R")
 source("plot_style.R")
 source("function_safe_se.R")
 
-#setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 #read in data
 averages <- read_csv(
   "routine_vs_habit_avg.csv",
@@ -21,6 +21,9 @@ trials <- read_csv(
   "routine_vs_habit_trl.csv",
   na = c("", "NA")
 )
+
+#so on stay trials TE is calced, and on switch trials Reclicks are calculated.
+#so now to reorganise the data such that we may compare the two?
 
 #now plot
 
