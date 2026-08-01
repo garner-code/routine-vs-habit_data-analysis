@@ -35,7 +35,7 @@ rainbow <- paletteer::paletteer_c("viridis::turbo", n = 85)
 #tidy trial data ahead of plotting
 trials <- trials |>
   filter(ses == 4) |>
-  select(sub, ses, t, block, switch, accuracy, reclicks, rt, general_errors) |>
+  select(sub, ses, t, block, switch, task_jumps, accuracy, reclicks, rt, general_errors) |>
   group_by(sub, switch, block) |>
   mutate(
     switch = factor(switch, levels = c(0, 1), labels = c("Stay", "Switch")),
@@ -143,6 +143,24 @@ trials |>
 
 ggsave(
   "gen_errors_histo.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8
+)
+
+#task jumps
+
+trials |>
+  summarise(
+    task_jumps = mean(task_jumps),
+    se = safe_se(task_jumps),
+    ymin =  task_jumps - se,
+    ymax = task_jumps + se,
+  ) |>
+  histogram(sub, task_jumps, ymin, ymax) +
+  plot_style()
+ggsave(
+  "task_jumps_histo.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
   width = 14,
   height = 8
