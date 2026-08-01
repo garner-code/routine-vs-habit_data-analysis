@@ -118,6 +118,7 @@ averages |>
     aes(x = sub, y = TE, ymin = ymin, ymax = ymax),
     width = 0.2, position = position_dodge(0.9)
   ) +
+  facet_grid(block ~ .) +
   scale_color_paletteer_c("viridis::turbo") +
   scale_fill_paletteer_c("viridis::turbo") +
   plot_style()
