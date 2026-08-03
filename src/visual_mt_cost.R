@@ -78,15 +78,62 @@ mt_cost_long <- mt_cost |>
   #rt
 
 mt_cost_long |>
-  ggplot(aes(x = rt_cost_stay, y = TE))
+  filter(re_or_te == "TE") |>
+  ggplot(aes(x = rt_cost_stay, y = value)) +
+  geom_point(colour = "#428C5CFF", size = 2) +
+  geom_smooth(method = lm, se = F, colour = "#A7CFF2FF") +
+  facet_wrap(. ~ block) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "TE x RT cost",
+    x = "RT Cost (ms, Mt - ST)",
+    y = "TE"
+  ) +
+  theme(
+    strip.background = element_blank()
+  )
 
   #acc
 
+mt_cost_long |>
+  filter(re_or_te == "TE") |>
+  ggplot(aes(x = acc_cost_stay, y = value)) +
+  geom_point(colour = "#428C5CFF", size = 2) +
+  geom_smooth(method = lm, se = F, colour = "#A7CFF2FF") +
+  facet_wrap(. ~ block) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "TE x acc cost",
+    x = "Accuracy Cost (Mt - ST)",
+    y = "TE"
+  ) +
+  theme(
+    strip.background = element_blank()
+  )
 
 
 
 #habits and mt cost
 
   #rt
+
+mt_cost_long |>
+  filter(re_or_te == "reclicks", sub != 30) |>
+  ggplot(aes(x = rt_cost_switch, y = value)) +
+  geom_point(colour = "#F4B5BDFF", size = 2) +
+  geom_smooth(method = lm, se = F, colour = "#A7CFF2FF") +
+  facet_wrap(. ~ block) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "Reclicks x RT cost",
+    x = "RT Cost (ms, Mt - ST)",
+    y = "Reclicks"
+  ) +
+  theme(
+    strip.background = element_blank()
+  )
 
   #acc
