@@ -1,20 +1,29 @@
 #####################              COHS ANALYSIS              ##################
-#sadie lane z5418956
+#sadie lane 2026
+#script to tidy cose output, score it, and finally output a csv file which
+#may be easily joined to existing averages dataset
 
 library(tidyverse)
 library(paletteer)
 library(psychTools)
 library(psych)
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
+source("function_dv_histo.R")
+source("function_safe_se.R")
+source("plot_style.R")
+source("function_safe_se.R")
 
-#setwd("C:/Users/user/OneDrive - UNSW/2026!/Honours/Data/routine_habit/res")
+#change to whatever n size is
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
+#read in data
 averages <- read_csv(
   "routine_vs_habit_avg.csv",
   na = c("", "NA")
 )
 
 COHS <- read_csv(
-  "cohs_42ps.csv",
+  "demo_cohs_raw.csv",
   na = c("", "NA")
 )
 
@@ -73,5 +82,11 @@ raw_df <- raw_df |>
 
 raw_df$sub <- as.factor(raw_df$sub)
 
+#histo built into psych package
+histogram_cohs(raw_df, sub, auto)
 
+
+# join df with averages onto averages --------------------------------------------
+
+joint_cohs <- full_join(averages, raw_df, by = 'sub')
 

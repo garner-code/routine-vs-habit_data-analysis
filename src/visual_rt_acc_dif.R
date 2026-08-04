@@ -4,6 +4,25 @@
 
 library(tidyverse)
 library(paletteer)
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
+source("function_dv_histo.R")
+source("function_safe_se.R")
+source("plot_style.R")
+source("function_safe_se.R")
+
+#change to whatever n size is
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
+
+#read in data
+averages <- read_csv(
+  "routine_vs_habit_avg.csv",
+  na = c("", "NA")
+)
+
+trials <- read_csv(
+  "routine_vs_habit_trl.csv",
+  na = c("", "NA")
+)
 
 averages |>
   filter(ses == 4) |>
