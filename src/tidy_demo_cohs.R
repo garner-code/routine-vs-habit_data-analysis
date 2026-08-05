@@ -1,0 +1,47 @@
+################################################################################
+#################    Sadie Lane tidy raw democohs 2026          ################
+################################################################################
+
+library(tidyverse)
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
+source("function_dv_histo.R")
+source("function_safe_se.R")
+source("plot_style.R")
+source("function_safe_se.R")
+
+#change to whatever n size is
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
+
+raw_democohs <- read_csv(
+  "demo_cohs_raw.csv",
+  na = c("", "NA"),
+  skip = 3,
+  col_names = c(
+    "start_date", "end_date", "status", "ip", "progress", "dur", "complete",
+    "recorded_date", "response_id", "last_name", "first_name", "email", "data_ref",
+    "lat", "long", "channel", "user_lang", "sub", "sub_age", "sub_gender", "sub_gender_spec",
+    "sub_hand", "sub_lang", "cohs_1", "cohs_2", "cohs_3", "cohs_4", "cohs_5",
+    "cohs_6", "cohs_7", "cohs_8", "cohs_9", "cohs_10", "cohs_11", "cohs_12",
+    "cohs_13", "cohs_14", "cohs_15", "cohs_16", "cohs_17", "cohs_18", "cohs_19",
+    "cohs_20", "cohs_21", "cohs_22", "cohs_23", "cohs_24", "cohs_25", "cohs_26",
+    "cohs_27", "data_pol_violate"
+    ),
+  col_types = c(
+    "?", "?", "?", "?", "d", "d", "l", "?", "c", "c", "c", "c", "c",
+    "d", "d", "c", "c", "d", "d", "d", "f", "c", "f", "c", "c", "c",
+    "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c",
+    "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c"
+  )
+)
+
+tidy_democohs <- raw_democohs |>
+  select(dur, sub:cohs_27) |>
+  relocate(sub, dur) |>
+  mutate(
+    across(c(cohs_1:cohs_27), parse_number)
+  )
+
+write_csv(tidy_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/demo_cohs.csv")
+
+
+

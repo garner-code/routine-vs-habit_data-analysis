@@ -1,6 +1,6 @@
 #####################              COHS ANALYSIS              ##################
 #sadie lane 2026
-#script to tidy cose output, score it, and finally output a csv file which
+#script to score  output a csv file which
 #may be easily joined to existing averages dataset
 
 library(tidyverse)
@@ -23,7 +23,7 @@ averages <- read_csv(
 )
 
 COHS <- read_csv(
-  "demo_cohs_raw.csv",
+  "demo_cohs.csv",
   na = c("", "NA")
 )
 
