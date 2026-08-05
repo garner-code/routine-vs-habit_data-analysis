@@ -43,5 +43,21 @@ tidy_democohs <- raw_democohs |>
 
 write_csv(tidy_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/demo_cohs.csv")
 
+#we joint the scored cohs onto averages in  the score_cohs.R script
+#lets also join the demographics onto the averages file
+
+demos <- tidy_democohs |>
+  select(sub:sub_lang) |>
+  mutate(sub = factor(sub))
+
+joint_averages_demos <- full_join(averages, demos, by = 'sub')
+
+write_csv(joint_averages_demos, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/joint_averages_demos.csv")
+
+#and finally join everything and write a csv.
+
+averages_democohs <- full_join(joint_averages_cohs, demos, by = 'sub')
+
+write_csv(averages_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_democohs.csv")
 
 

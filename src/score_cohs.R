@@ -69,7 +69,13 @@ raw_scores <- scale$scores
 
 #graph - commented out is a line to save the graph :)
 #pairs.panels(raw_scores, pch = '.')
-#ggsave("18_participants_default_graph.png")
+#
+ggsave(
+  "cohs_data_distrib.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8
+)
 
 
 # make df with sub number mapped onto raw scores --------------------------
@@ -88,5 +94,7 @@ histogram_cohs(raw_df, sub, auto)
 
 # join df with averages onto averages --------------------------------------------
 
-joint_cohs <- full_join(averages, raw_df, by = 'sub')
+joint_averages_cohs <- full_join(averages, raw_df, by = 'sub')
+
+write_csv(joint_averages_cohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/joint_averages_cohs.csv")
 
