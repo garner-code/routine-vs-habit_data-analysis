@@ -1,15 +1,10 @@
 ################################################################################
-########            Did type of task lead impact rt, acc?               ########
+########    Did our response time manip lead to slower rt in mt con?    ########
 ########                    Sadie lane, 2026                            ########
 ################################################################################
 
 library(tidyverse)
-library(paletteer)
-library(afex)
-library(emmeans)
-library(PsyR)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_safe_se.R")
 source("plot_style.R")
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
@@ -20,11 +15,10 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
-#run a MANOVA
 
-# tidy data ---------------------------------------------------------------
+# tidy data --------------------------------------------------------------------
 
 
-# analyse -----------------------------------------------------------------
+# analyse ----------------------------------------------------------------------
 
 
