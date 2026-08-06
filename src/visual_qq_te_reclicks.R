@@ -1,14 +1,11 @@
 ################################################################################
 ################        Sadie Lane TE v Reclicks        ########################
 ################################################################################
-
+rm(list=ls())
 library(tidyverse)
 library(paletteer)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_dv_histo.R")
-source("function_safe_se.R")
 source("plot_style.R")
-source("function_safe_se.R")
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -43,6 +40,7 @@ reclicks_te <- averages |>
     values_to = "reclicks_or_TE"
   )
 
+# run the analysis of TE corrd with reclicks as is and as sqrtd
 reclicks_te |>
   ggplot(aes(sample = reclicks_or_TE, colour = dv)) +
   geom_qq() +
@@ -88,7 +86,7 @@ ggsave(
 # and some histograms while we are here -----------------------------------
 
 reclicks_te |>
-  filter(sub != 30, dv == "reclicks_mean") |>
+  filter(dv == "reclicks_mean") |>
   ggplot(aes(x = reclicks_or_TE)) +
   geom_histogram(binwidth = 0.1, colour = "#ECCBAEFF", fill = "#ECCBAEFF") +
   facet_wrap(. ~ block) +
@@ -132,3 +130,4 @@ ggsave(
   width = 14,
   height = 8
 )
+

@@ -165,3 +165,96 @@ ggsave(
   width = 14,
   height = 8
 )
+
+
+# freq histos -------------------------------------------------------------
+
+#rt
+averages |>
+  filter(ses == 4) |>
+  ggplot(aes(x = rt_mean)) +
+  geom_histogram(binwidth = 0.01) +
+  facet_grid(switch ~ block) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "gen errors"
+  ) +
+  theme(
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+  )
+
+ggsave(
+  "rt_mean_freq_histo.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8
+)
+
+#acc
+averages |>
+  filter(ses == 4) |>
+  ggplot(aes(x = accuracy_mean)) +
+  geom_histogram(binwidth = 0.01) +
+  facet_grid(switch ~ block) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "gen errors"
+  ) +
+  theme(
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+  )
+
+
+#gen errors
+averages |>
+  filter(ses == 4) |>
+  ggplot(aes(x = general_errors_mean)) +
+    geom_histogram(binwidth = 0.01) +
+    facet_grid(switch ~ block) +
+    plot_style() +
+    theme_classic() +
+    labs(
+      title = "gen errors"
+    ) +
+    theme(
+      strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+    )
+
+ggsave(
+  "acc_mean_freq_histo.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8
+)
+
+ggsave(
+  "gen_errors_freq_histo.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8
+)
+
+#task jumps
+
+averages |>
+  filter(ses == 4) |>
+  ggplot(aes(x = task_jumps_mean)) +
+  geom_histogram(binwidth = 0.05) +
+  facet_grid(switch ~ block) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "gen errors"
+  ) +
+  theme(
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+  )
+
+ggsave(
+  "task_jumps_freq_histo.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 14,
+  height = 8
+)

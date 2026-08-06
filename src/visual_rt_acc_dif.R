@@ -1,14 +1,11 @@
 ################################################################################
 ############    Sadie Lane vis mt v st response time, acc dif     ##############
 ################################################################################
-
+rm(list=ls())
 library(tidyverse)
 library(paletteer)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_dv_histo.R")
-source("function_safe_se.R")
 source("plot_style.R")
-source("function_safe_se.R")
 
 #change to whatever n size is
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
@@ -16,11 +13,6 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 #read in data
 averages <- read_csv(
   "routine_vs_habit_avg.csv",
-  na = c("", "NA")
-)
-
-trials <- read_csv(
-  "routine_vs_habit_trl.csv",
   na = c("", "NA")
 )
 
@@ -118,3 +110,57 @@ ggsave(
   height = 8,
 )
 
+
+# make qqs ----------------------------------------------------------------
+
+qq <- averages |>
+  filter(ses == 4) |>
+  group_by(sub, block, switch) |>
+  mutate(
+    switch = factor(
+      switch, c(0, 1), c("Stay", "Switch")
+    ),
+    Block = factor(
+      block, c("mt", "st"), c("Multitasking", "Singletasking")
+    )
+  ) |>
+  select(sub:switch, accuracy_mean, rt_mean) |>
+  pivot_longer(
+    cols = c("accuracy_mean", "rt_mean"),
+    names_to = "dv",
+    values_to = "rt_or_acc"
+  )
+
+
+# run RT analysis with and without log
+qq |>
+  ggplot(aes(sample = log(rt_or_acc), colour = dv)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  facet_grid(switch ~ block)
+
+# run t-tests --------------------------------------------------------
+# (and summaries)
+
+averages |>
+  filter(ses == 4 & switch == 0) |>
+  group_by(block) |>
+  summarise(M=mean(rt_mean),
+            SD=sd(rt_mean),
+            accM = mean(accuracy_mean),
+            accSD = sd(accuracy_mean))
+
+
+for_t_tests <- averages |>
+  filter(ses == 4 & switch == 0) |>
+  select(sub, block, rt_mean, accuracy_mean) |>
+  pivot_wider(
+   names_from = block,
+   values_from = c(rt_mean, accuracy_mean)
+  )
+
+# do RT with and without log
+with(for_t_tests, t.test(log(rt_mean_st), log(rt_mean_mt)))
+with(for_t_tests, t.test(accuracy_mean_st, accuracy_mean_mt))

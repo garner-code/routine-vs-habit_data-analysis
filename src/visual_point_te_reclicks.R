@@ -1,15 +1,12 @@
 ################################################################################
 ################      Sadie Lane TE v Reclicks Scatter    ######################
 ################################################################################
-
+rm(list=ls())
 library(tidyverse)
 library(paletteer)
 library(ggrepel)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_dv_histo.R")
-source("function_safe_se.R")
 source("plot_style.R")
-source("function_safe_se.R")
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -19,10 +16,6 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
-trials <- read_csv(
-  "routine_vs_habit_trl.csv",
-  na = c("", "NA")
-)
 
 #first lets tidy our data in prep of our scatter plot
 
@@ -47,6 +40,16 @@ reclicks_te_point |>
   geom_point() +
   geom_text_repel() +
   facet_wrap(. ~ block) +
+  theme_classic() +
+  plot_style()
+
+#first with labels bc it will be interesting
+reclicks_te_point |>
+  filter(block=="st") |>
+  ggplot(aes(x = reclicks_mean, y = TE, label = sub)) +
+  geom_point() +
+#  geom_text_repel() +
+#  facet_wrap(. ~ block) +
   theme_classic() +
   plot_style()
 
@@ -84,6 +87,10 @@ mt_only <- reclicks_te_point |>
 mt_cor <- cor(mt_only$reclicks_mean, mt_only$TE, method = "pearson")
 
 st_only <- reclicks_te_point |>
-  filter(block == "st", sub != 30)
+  filter(block == "st")
+
+with(reclicks_te_point %>% filter(block == "st"), cor.test(reclicks_mean, TE,
+                                                           method="spearman"))
+
 
 st_cor <- cor(st_only$reclicks_mean, st_only$TE, method = "pearson")
