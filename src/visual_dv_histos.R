@@ -1,15 +1,15 @@
 ##################              DV VIS            ##############################
 #sadie lane, 2026
 
+rm(list=ls())
 library(tidyverse)
 library(paletteer)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
 source("function_dv_histo.R")
 source("function_safe_se.R")
 source("plot_style.R")
-source("function_safe_se.R")
 
-#change to whatever n size is
+#change to your wd
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
@@ -23,12 +23,12 @@ trials <- read_csv(
   na = c("", "NA")
 )
 
+#change to whatever n size is
 rainbow <- paletteer::paletteer_c("viridis::turbo", n = 85)
 
 #so now make histograms, where across each the subs each have a unique colour
 #so we can visualise how they look per dv
-#these histograms are going to be AT TEST ONLY
-
+#these histograms are going to be AT TEST (ses == 4) ONLY
 
 # messy code to make histograms -------------------------------------------
 
