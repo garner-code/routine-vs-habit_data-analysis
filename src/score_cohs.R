@@ -1,19 +1,14 @@
 #####################              COHS ANALYSIS              ##################
 #sadie lane 2026
-#script to score  output a csv file which
+#script to score COHS and output a csv file which
 #may be easily joined to existing averages dataset
 
+rm(list=ls())
 library(tidyverse)
-library(paletteer)
 library(psychTools)
 library(psych)
-setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_dv_histo.R")
-source("function_safe_se.R")
-source("plot_style.R")
-source("function_safe_se.R")
 
-#change to whatever n size is
+#set your workingdrive
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
@@ -22,18 +17,18 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
+#obtained from score_cohs.R
 COHS <- read_csv(
   "demo_cohs.csv",
   na = c("", "NA")
 )
 
+#make sub a factor (forlater joining)
 averages$sub <- as.factor(averages$sub)
 
 
 
 # Scoring COHS ------------------------------------------------------------
-
-
 
 #Now it would be good to score the scale
 #using psych package, organise according to automaticity and routine
@@ -56,20 +51,19 @@ key <- list(
 scale <- scoreItems(key, COHS)
 
 #short output:
-#print(scale)
+print(scale)
 #long output:
-#print(scale, short = FALSE)
+print(scale, short = FALSE)
 
 #create raw scores, then view head and tail (rounded to 2 d.p.)
 raw_scores <- scale$scores
-#headTail (round(raw_scores, 2))
+headTail (round(raw_scores, 2))
 
 #describe
-#describe(raw_scores)
+describe(raw_scores)
 
 #graph - commented out is a line to save the graph :)
-#pairs.panels(raw_scores, pch = '.')
-#
+pairs.panels(raw_scores, pch = '.')
 ggsave(
   "cohs_data_distrib.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),

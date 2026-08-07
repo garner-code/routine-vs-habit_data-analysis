@@ -1,17 +1,16 @@
 ################################################################################
 #################    Sadie Lane tidy raw democohs 2026          ################
 ################################################################################
+#take in the raw csv outputted by qualtrics and output something
+#tidy that can be joined to our averages data
 
+rm(list=ls())
 library(tidyverse)
-setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_dv_histo.R")
-source("function_safe_se.R")
-source("plot_style.R")
-source("function_safe_se.R")
 
-#change to whatever n size is
+#set to your wd
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
+#now read in qualtrics csv file, relabel cols and assign datatypes
 raw_democohs <- read_csv(
   "demo_cohs_raw.csv",
   na = c("", "NA"),
@@ -34,6 +33,7 @@ raw_democohs <- read_csv(
   )
 )
 
+#now tidy what we just read in and transform all the cohs qs to just numbers
 tidy_democohs <- raw_democohs |>
   select(dur, sub:cohs_27) |>
   relocate(sub, dur) |>

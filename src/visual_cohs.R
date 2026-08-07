@@ -1,15 +1,12 @@
 ##################              COHS VISUAL              #######################
 #sadie lane, 2026
 
+rm(list=ls())
 library(tidyverse)
 library(paletteer)
 library(ggrepel)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_dv_histo.R")
-source("function_safe_se.R")
 source("plot_style.R")
-source("function_safe_se.R")
-source("function_cohs_histo.R")
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -19,8 +16,16 @@ averages_democohs <- read_csv(
   na = c("", "NA")
 )
 
+df <- read_csv(
+  "split_by_block.csv",
+  na = c("", "NA")
+)
 
-# histograms --------------------------------------------------------------
+#7th august - SL:
+#note to future self - the cors in this script are probably right (histograms
+#suggest the data is normally distributed), but to be sanity checked
+
+# freq histograms --------------------------------------------------------------
 
 #auto
 averages_democohs |>
@@ -78,19 +83,8 @@ cor(averages_democohs$auto, averages_democohs$rout, method = "pearson")
 
 #make a df for comparison
 #reminder that reclicks are necessarily switch, TE is necessarily stay
-df <- averages_democohs |>
-  select(sub:switch, reclicks_mean, TE, auto, rout) |>
-  filter(ses == 4) |>
-  pivot_wider(
-    names_from = switch,
-    values_from = c("reclicks_mean", "TE")
-  ) |>
-  mutate(
-    reclicks_mean = reclicks_mean_1,
-    TE = TE_0
-  ) |>
-  select(sub, block, reclicks_mean, TE, auto, rout)
 
+#for corrs lets split by mt and st
 df_mt <- df |>
   filter(block == "mt")
 
