@@ -1,6 +1,7 @@
 ################################################################################
 ################      Sadie Lane TE v Reclicks Scatter    ######################
 ################################################################################
+
 rm(list=ls())
 library(tidyverse)
 library(paletteer)
@@ -11,45 +12,24 @@ source("plot_style.R")
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
-averages <- read_csv(
-  "routine_vs_habit_avg.csv",
+split_by_block <- read_csv(
+  "split_by_block.csv",
   na = c("", "NA")
 )
 
 
 #first lets tidy our data in prep of our scatter plot
+#so basically use the split_by_block csv
 
-reclicks_te_point <- averages |>
-  select(sub:switch, reclicks_mean, TE) |>
-  filter(ses == 4) |>
-  pivot_wider(
-    names_from = switch,
-    values_from = c("reclicks_mean", "TE")
-  ) |>
-  mutate(
-    reclicks_mean = reclicks_mean_1,
-    TE = TE_0
-  ) |>
-  select(sub, block, reclicks_mean, TE)
-
-#now lets plot the data
+split_by_block <- split_by_block |>
+  select(sub:TE)
 
 #first with labels bc it will be interesting
-reclicks_te_point |>
+split_by_block |>
   ggplot(aes(x = reclicks_mean, y = TE, label = sub)) +
   geom_point() +
   geom_text_repel() +
   facet_wrap(. ~ block) +
-  theme_classic() +
-  plot_style()
-
-#first with labels bc it will be interesting
-reclicks_te_point |>
-  filter(block=="st") |>
-  ggplot(aes(x = reclicks_mean, y = TE, label = sub)) +
-  geom_point() +
-#  geom_text_repel() +
-#  facet_wrap(. ~ block) +
   theme_classic() +
   plot_style()
 
@@ -61,7 +41,7 @@ ggsave(
 )
 
 #next im going to eyeball out some outliers (sub 30)
-reclicks_te_point |>
+split_by_block |>
   filter(sub != 30) |>
   ggplot(aes(x = reclicks_mean, y = TE)) +
   geom_point() +
@@ -81,16 +61,4 @@ ggsave(
   height = 8
 )
 
-mt_only <- reclicks_te_point |>
-  filter(block == "mt", sub != 30)
 
-mt_cor <- cor(mt_only$reclicks_mean, mt_only$TE, method = "pearson")
-
-st_only <- reclicks_te_point |>
-  filter(block == "st")
-
-with(reclicks_te_point %>% filter(block == "st"), cor.test(reclicks_mean, TE,
-                                                           method="spearman"))
-
-
-st_cor <- cor(st_only$reclicks_mean, st_only$TE, method = "pearson")

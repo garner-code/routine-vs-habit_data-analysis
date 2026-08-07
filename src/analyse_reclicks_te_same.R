@@ -1,22 +1,24 @@
 ################################################################################
 ############    To what extent are reclicks and te the same?    ################
-############                  Sadie lane, 2026                  ################
+############                  Sadie lane, KGG 2026              ################
 ################################################################################
 
+rm(list=ls())
 library(tidyverse)
-library(paletteer)
-setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("function_safe_se.R")
-source("plot_style.R")
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
-averages <- read_csv(
-  "averages_democohs.csv",
+split_by_block <- read_csv(
+  "split_by_block.csv",
   na = c("", "NA")
 )
 
+
+# tidy our data -----------------------------------------------------------
+
+split_by_block <- split_by_block |>
+  select(sub:TE)
 
 # test outliers -----------------------------------------------------------
 
@@ -44,13 +46,21 @@ averages_te |>
   #so no outliers for TE
   #highly highly dense data
 
-
-# tidy/transform to fit normal distrib -----------------------------------------
-
-
-
 # Analyse -----------------------------------------------------------------
 
 
+mt_only <- split_by_block |>
+  filter(block == "mt", sub != 30)
 
+mt_cor <- cor(mt_only$reclicks_mean, mt_only$TE, method = "pearson")
+
+st_only <- split_by_block |>
+  filter(block == "st")
+
+with(
+  reclicks_te_point |> filter(block == "st"),
+  cor.test(reclicks_mean, TE, method="spearman")
+  )
+
+st_cor <- cor(st_only$reclicks_mean, st_only$TE, method = "pearson")
 
