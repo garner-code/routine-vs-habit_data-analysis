@@ -1,15 +1,15 @@
 ################################################################################
-############          SL + KGG vis benes of reclicks, TE          ##############
+############          SL + KGG vis tidy benes of reclicks, TE     ##############
 ################################################################################
-
+#script to output a df for statistical analysis of costs
+#of mt v st
 
 rm(list=ls())
 library(tidyverse)
-library(paletteer)
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
 source("plot_style.R")
 
-#change to whatever n size is
+#change to whatever wd is
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
@@ -18,26 +18,29 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
-ind_predictors <- averages |>
-  select(sub:switch, reclicks_mean, TE) |>
-  filter(ses == 4, block == "st") |>
-  pivot_wider(
-    names_from = switch,
-    values_from = c("reclicks_mean", "TE")
-  ) |>
-  mutate(
-    reclicks_mean = reclicks_mean_1,
-    TE = TE_0
-  ) |>
-  select(sub, block, reclicks_mean, TE)
+split_by_block <- read_csv(
+  "split_by_block.csv",
+  na = c("","NA")
+)
 
+#create ind_predictors using the split_by_block df
+ind_predictors <- split_by_block |>
+  filter(block == "st") |>
+  select(sub:TE)
+
+
+#create costs df (difference scores in rt and acc per sub)
 costs <- averages |>
   filter(ses == 4 & switch == 0) |>
   group_by(sub) |>
-  summarise(RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
-            acc_cost = accuracy_mean[block == "mt"] - accuracy_mean[block == "st"])
+  summarise(
+    RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
+    acc_cost = accuracy_mean[block == "mt"] - accuracy_mean[block == "st"]
+    )
 
-costs |> ggplot(aes(x=RT_cost)) +
+#check normalcy of costs - histo, box and qq
+costs |>
+  ggplot(aes(x = RT_cost)) +
   geom_histogram()
 
 costs |>
@@ -52,8 +55,6 @@ costs |>
   theme_classic()
 
 
-#qqnorm
-
 costs |>
   pivot_longer(
     cols = c("RT_cost", "acc_cost"),
@@ -64,12 +65,8 @@ costs |>
   geom_qq() +
   geom_qq_line() +
   theme_classic() +
-  #facet_wrap()
   plot_style()
 
-perform_dat <- inner_join(ind_predictors,
-                          costs,
-                          by="sub")
+perform_dat <- inner_join(ind_predictors, costs, by="sub")
 
-mod <- lm(RT_cost ~ TE + sqrt(reclicks_mean+0.0001), data=perform_dat)
-summary(mod)
+write_csv(perform_dat, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_dat.csv")
