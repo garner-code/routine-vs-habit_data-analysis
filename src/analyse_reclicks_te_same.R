@@ -5,6 +5,7 @@
 
 rm(list=ls())
 library(tidyverse)
+library(gtsummary)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -18,33 +19,30 @@ split_by_block <- read_csv(
 # tidy our data -----------------------------------------------------------
 
 split_by_block <- split_by_block |>
-  select(sub:TE)
-
-# test outliers -----------------------------------------------------------
-
-averages_reclicks <- averages |>
-  filter(ses == 4, switch == 1) |>
+  select(sub:TE) |>
   group_by(sub) |>
   mutate(
-    reclicks_sd = sd(reclicks_mean)
-  )
-
-averages_reclicks |>
-  filter(reclicks_sd > 3)
-#so sub 30 is outlier reclicks
-
-averages_te <- averages |>
-  filter(ses == 4, switch == 0) |>
-  group_by(sub) |>
-  mutate(
+    reclicks_sd = sd(reclicks_mean),
     TE_sd = sd(TE)
   )
 
-averages_te |>
-  filter(TE_sd > 2.5) |>
-  relocate(TE_sd)
-  #so no outliers for TE
-  #highly highly dense data
+#note for future self - for whatever reason sd cannot
+#calculate individually for an st and mt group
+#but proceeding as if sub 30 should be excluded (it should)
+
+# test outliers -----------------------------------------------------------
+
+#reclicks
+
+split_by_block |>
+  filter(reclicks_sd > 3) |>
+  select(sub, block, reclicks_mean, reclicks_sd) |>
+  tbl_summary(
+  )
+
+#TE
+split_by_block |>
+  filter(TE_sd > 3)
 
 # Analyse -----------------------------------------------------------------
 
