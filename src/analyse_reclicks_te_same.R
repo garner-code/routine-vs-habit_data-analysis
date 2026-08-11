@@ -5,6 +5,7 @@
 
 rm(list=ls())
 library(tidyverse)
+library(broom)
 library(gtsummary)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
@@ -18,13 +19,32 @@ split_by_block <- read_csv(
 
 # tidy our data -----------------------------------------------------------
 
-split_by_block <- split_by_block |>
+split <- split_by_block |>
   select(sub:TE) |>
   group_by(sub) |>
   mutate(
     reclicks_sd = sd(reclicks_mean),
     TE_sd = sd(TE)
   )
+
+mt_only <- split |>
+  filter(block == "mt", sub != 30)
+
+st_only <- split |>
+  filter(block == "st")
+
+split_sqrt <- split_by_block |>
+  mutate(
+    reclicks_mean_sqrt = sqrt(reclicks_mean + 0.0001),
+    TE_sqrt = sqrt(TE + 0.0001)
+  ) |>
+  select(sub, block, reclicks_mean_sqrt, TE_sqrt)
+
+mt_sqrt <- split_sqrt |>
+  filter(block == "mt", sub != 30)
+
+st_sqrt <- split_sqrt |>
+  filter(block == "st")
 
 #note for future self - for whatever reason sd cannot
 #calculate individually for an st and mt group
@@ -34,31 +54,52 @@ split_by_block <- split_by_block |>
 
 #reclicks
 
-split_by_block |>
+split |>
   filter(reclicks_sd > 3) |>
   select(sub, block, reclicks_mean, reclicks_sd) |>
   tbl_summary(
   )
 
 #TE
-split_by_block |>
+split |>
   filter(TE_sd > 3)
 
 # Analyse -----------------------------------------------------------------
 
+#correlations
 
-mt_only <- split_by_block |>
-  filter(block == "mt", sub != 30)
+#no transform
+pearson <- cor.test(st_only$reclicks_mean, st_only$TE, method = "pearson") |>
+  tidy()
 
-mt_cor <- cor(mt_only$reclicks_mean, mt_only$TE, method = "pearson")
-
-st_only <- split_by_block |>
-  filter(block == "st")
-
-with(
-  reclicks_te_point |> filter(block == "st"),
-  cor.test(reclicks_mean, TE, method="spearman")
+write_csv(
+  pearson,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_pearson_reclicks_TE.csv"
   )
 
-st_cor <- cor(st_only$reclicks_mean, st_only$TE, method = "pearson")
 
+spearman <- cor.test(st_only$reclicks_mean, st_only$TE, method = "spearman") |>
+  tidy()
+
+write_csv(
+  spearman,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_spearman_reclicks_TE.csv"
+)
+
+#sqrt transform (as reclicks more normally distributed when sqrted)
+
+pearson_sqrt <- cor.test(st_sqrt$reclicks_mean_sqrt, st_sqrt$TE_sqrt, method = "pearson") |>
+  tidy()
+
+write_csv(
+  pearson_sqrt,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_pearson_sqrt_reclicks_TE.csv"
+)
+
+spearman_sqrt <- cor.test(st_sqrt$reclicks_mean_sqrt, st_sqrt$TE_sqrt, method = "spearman") |>
+  tidy()
+
+write_csv(
+  spearman_sqrt,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_spearman_sqrt_reclicks_TE.csv"
+)
