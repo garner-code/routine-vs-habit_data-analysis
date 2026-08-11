@@ -22,6 +22,8 @@ long_rt_acc <- read_csv(
   na = c("", "NA")
 )
 
+# tidy some thigns --------------------------------------------------------
+
 
 # plot thigns -------------------------------------------------------------
 
@@ -122,14 +124,37 @@ ggsave(
 
 # make qqs ----------------------------------------------------------------
 
-
+#qq no log
+long_rt_acc |>
+  ggplot(aes(sample = rt_or_acc, colour = dv)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  facet_grid(switch ~ block) +
+  scale_color_paletteer_d("vangogh::Cypresses") +
+  scale_fill_paletteer_d("vangogh::Cypresses") +
+  theme(
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
+  )
 
 # run RT analysis with and without log
+
+#qq with log
 long_rt_acc |>
   ggplot(aes(sample = log(rt_or_acc), colour = dv)) +
   geom_qq() +
   geom_qq_line() +
   theme_classic() +
   plot_style() +
-  facet_grid(switch ~ block)
+  facet_grid(switch ~ block) +
+  scale_color_paletteer_d("vangogh::Cypresses") +
+  scale_fill_paletteer_d("vangogh::Cypresses") +
+  theme(
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
+  ) +
+  labs(
+    title = ,
+    colour = "Dependent Variable",
+  )
 

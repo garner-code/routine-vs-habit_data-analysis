@@ -3,7 +3,10 @@
 ########                    Sadie lane, 2026                            ########
 ################################################################################
 
+rm(list=ls())
 library(tidyverse)
+library(broom)
+library(skimr)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -35,10 +38,74 @@ for_t_tests <- averages |>
     values_from = c(rt_mean, accuracy_mean)
   )
 
-# analyse ----------------------------------------------------------------------
-# run t tests
-# (and summaries)
+for_t_tests_log <- for_t_tests |>
+  mutate(
+    rt_mt_log  = log(rt_mean_mt),
+    rt_st_log  = log(rt_mean_st),
+    acc_mt_log = log(accuracy_mean_mt),
+    acc_st_log = log(accuracy_mean_st),
+  ) |>
+  select(sub, rt_mt_log:acc_st_log)
 
-# do RT with and without log
-with(for_t_tests, t.test(log(rt_mean_st), log(rt_mean_mt)))
-with(for_t_tests, t.test(accuracy_mean_st, accuracy_mean_mt))
+# analyse ----------------------------------------------------------------------
+# run t tests and summaries. Output into csvs
+
+# acc (no transform)
+
+t_acc <- with(for_t_tests, t.test(accuracy_mean_st, accuracy_mean_mt)) |>
+  tidy()
+
+write_csv(
+  t_acc,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_t_test_acc.csv"
+)
+
+sum_acc <- with(for_t_tests, summary(accuracy_mean_st, accuracy_mean_mt)) |>
+  skim()
+
+sum_acc <- for_t_tests |>
+  skim_without_charts()
+
+write_csv(
+  sum_acc,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_sum_acc.csv"
+)
+
+#rt (with and without log bc normal distrib)
+
+#without
+t_rt <- with(for_t_tests, t.test(rt_mean_st, rt_mean_mt)) |>
+  tidy()
+
+write_csv(
+  t_rt,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_t_rt.csv"
+)
+
+
+sum_rt <- for_t_tests |>
+  skim_without_charts()
+
+write_csv(
+  sum_rt,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_sum_rt.csv"
+)
+
+#with log
+t_rt_log <- with(for_t_tests, t.test(log(rt_mean_st), log(rt_mean_mt))) |>
+  tidy()
+
+write_csv(
+  t_rt_log,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_t_rt_log.csv"
+)
+
+
+sum_log_rt <- for_t_tests_log |>
+  skim_without_charts()
+
+write_csv(
+  sum_log_rt,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_sum_rt_log.csv"
+)
+
