@@ -78,8 +78,12 @@ split_by_block |>
   ) +
   plot_style() +
   labs(
+<<<<<<< HEAD
     title = "Reclicks and TE correlate on Singletasking trials",
     subtitle = "Correlation Tests with and without square root ransformation are same to 3 d.p.",
+=======
+    title = "Reclicks and TE correlate on Singletasking trials\n",
+>>>>>>> f21e898c835655541c36aec203e36fba1cc0e2b7
     x = "Mean Reclicks",
     y = "TE"
   )
