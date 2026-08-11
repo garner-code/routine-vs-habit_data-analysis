@@ -21,9 +21,12 @@ split_by_block <- read_csv(
 #first lets tidy our data in prep of a qq plot (norm distrib)
 
 reclicks_te <- split_by_block |>
-  select(sub:TE) |>
+  mutate(
+    Reclicks = reclicks_mean
+  ) |>
+  select(sub, block, Reclicks, TE) |>
   pivot_longer(
-    cols = c("reclicks_mean", "TE"),
+    cols = c("Reclicks", "TE"),
     names_to = "dv",
     values_to = "reclicks_or_TE"
   )
@@ -108,6 +111,53 @@ ggsave(
   width = 14,
   height = 8
 )
+
+
+# thesis - st only with sub 30 --------------------------------------------
+
+#no transform
+reclicks_te |>
+  filter(block == "st") |>
+  ggplot(aes(sample = reclicks_or_TE, colour = dv)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  scale_color_paletteer_d("wesanderson::Darjeeling2") +
+  labs(
+    title = "TE is approximately normally distributed\nwithout transformation",
+    subtitle = "N = 85",
+    colour = "Dependent Variable"
+  )
+
+ggsave(
+  "qq_rq1_thesis_sqrt.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 8,
+  height = 8
+)
+
+#sqrt
+reclicks_te |>
+  filter(block == "st") |>
+  ggplot(aes(sample = sqrt(reclicks_or_TE), colour = dv)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  scale_color_paletteer_d("wesanderson::Darjeeling2") +
+  labs(
+    title = "Reclicks are normally distributed with a square root transformation",
+    subtitle = "N = 85",
+    colour = "Dependent Variable"
+  )
+ggsave(
+  "qq_rq1_thesis_notransform.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 8,
+  height = 8
+)
+
 
 # and some histograms while we are here -----------------------------------
 #histos aren't sqrtd

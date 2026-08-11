@@ -62,3 +62,34 @@ ggsave(
 )
 
 
+# st only - for thesis ----------------------------------------------------
+
+split_by_block |>
+  filter(block == "st") |>
+  ggplot(aes(x = reclicks_mean, y = TE)) +
+  geom_point(shape = 21, size = 3, fill = "#899DA4FF", colour = "black") +
+  geom_smooth(method = lm, formula = 'y ~ x', se = F, colour = "#C93312FF") +
+  theme_classic() +
+  annotate(
+    geom = "text",
+    x = 7,
+    y = 0.9,
+    label = "Pearson's r = -0.370, p < 0.001   \nSpearman's r = -0.450, p < 0.001"
+  ) +
+  plot_style() +
+  labs(
+    title = "Reclicks and TE correlate on Singletasking trials\n",
+    x = "Mean Reclicks",
+    y = "TE"
+  )
+
+ggsave(
+  "te_v_reclicks_cor_thesis.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 8,
+  height = 8
+)
+
+
+
+
