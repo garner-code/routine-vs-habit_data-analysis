@@ -31,12 +31,8 @@ averages |>
   filter(ses == 4) |>
   group_by(sub, block, switch) |>
   mutate(
-    switch = factor(
-      switch, c(0, 1), c("Stay", "Switch")
-    ),
-    Block = factor(
-      block, c("mt", "st"), c("Multitasking", "Singletasking")
-    )
+    switch = factor(switch, c(0, 1), c("Stay", "Switch")),
+    block = factor(block, c("st", "mt"), c("Singletasking", "Multitasking"))
   ) |>
   summarise(
     rt_mean = mean(rt_mean)
@@ -62,14 +58,13 @@ averages |>
     x = "Block",
     y = "Mean Response Time (ms)",
     colour = "Block",
-    fill = "Block",
-    alpha = "Block"
+    fill = "Block"
   )
 
 ggsave(
   "rt_dif.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
-  width = 14,
+  width = 8,
   height = 8,
 )
 
@@ -79,12 +74,8 @@ averages |>
   filter(ses == 4) |>
   group_by(sub, block, switch) |>
   mutate(
-    switch = factor(
-      switch, c(0, 1), c("Stay", "Switch")
-    ),
-    Block = factor(
-      block, c("mt", "st"), c("Multitasking", "Singletasking")
-    )
+    switch = factor(switch, c(0, 1), c("Stay", "Switch")),
+    block = factor(block, c("st", "mt"), c("Singletasking", "Multitasking"))
   ) |>
   summarise(
     accuracy_mean = mean(accuracy_mean)
@@ -117,7 +108,7 @@ averages |>
 ggsave(
   "acc_dif.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
-  width = 14,
+  width = 8,
   height = 8,
 )
 
@@ -126,35 +117,54 @@ ggsave(
 
 #qq no log
 long_rt_acc |>
+  mutate(
+    block = factor(block, c("st", "mt"), c("Singletasking", "Multitasking"))
+  ) |>
   ggplot(aes(sample = rt_or_acc, colour = dv)) +
   geom_qq() +
   geom_qq_line() +
   theme_classic() +
   plot_style() +
   facet_grid(switch ~ block) +
-  scale_color_paletteer_d("vangogh::Cypresses") +
-  scale_fill_paletteer_d("vangogh::Cypresses") +
+  scale_color_paletteer_d("fishualize::Oncorhynchus_mykiss") +
+  scale_fill_paletteer_d("fishualize::Oncorhynchus_mykiss") +
   theme(
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   )
+
+ggsave(
+  "qq_rt_acc.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 8,
+  height = 8,
+)
 
 # run RT analysis with and without log
 
 #qq with log
 long_rt_acc |>
+  mutate(
+    block = factor(block, c("st", "mt"), c("Singletasking", "Multitasking"))
+  ) |>
   ggplot(aes(sample = log(rt_or_acc), colour = dv)) +
   geom_qq() +
   geom_qq_line() +
   theme_classic() +
   plot_style() +
   facet_grid(switch ~ block) +
-  scale_color_paletteer_d("vangogh::Cypresses") +
-  scale_fill_paletteer_d("vangogh::Cypresses") +
+  scale_color_paletteer_d("fishualize::Oncorhynchus_mykiss") +
+  scale_fill_paletteer_d("fishualize::Oncorhynchus_mykiss") +
   theme(
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
   labs(
-    title = ,
+    title = "log adjusted",
     colour = "Dependent Variable",
   )
 
+ggsave(
+  "qq_rt_acc_log.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
+  width = 8,
+  height = 8,
+)

@@ -48,7 +48,7 @@ for_t_tests_log <- for_t_tests |>
   select(sub, rt_mt_log:acc_st_log)
 
 # analyse ----------------------------------------------------------------------
-# run t tests and summaries. Output into csvs
+# run t tests and summaries. Output into csvs. #n.b. this is all for switch = 0.
 
 # acc (no transform)
 
