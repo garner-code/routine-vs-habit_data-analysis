@@ -1,13 +1,11 @@
 ################################################################################
-############          SL + KGG vis tidy benes of reclicks, TE     ##############
+############          SL + KGG  tidy benes of reclicks, TE        ##############
 ################################################################################
 #script to output a df for statistical analysis of costs
 #of mt v st
 
 rm(list=ls())
 library(tidyverse)
-setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
-source("plot_style.R")
 
 #change to whatever wd is
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
@@ -38,35 +36,6 @@ costs <- averages |>
     acc_cost = accuracy_mean[block == "mt"] - accuracy_mean[block == "st"]
     )
 
-#check normalcy of costs - histo, box and qq
-costs |>
-  ggplot(aes(x = RT_cost)) +
-  geom_histogram()
-
-costs |>
-  pivot_longer(
-    cols = c("RT_cost", "acc_cost"),
-    names_to = "names",
-    values_to = "values"
-  ) |>
-  ggplot(aes(x = names, y = values)) +
-  geom_boxplot() +
-  plot_style() +
-  theme_classic()
-
-
-costs |>
-  pivot_longer(
-    cols = c("RT_cost", "acc_cost"),
-    names_to = "names",
-    values_to = "values"
-  ) |>
-  ggplot(aes(sample = values, colour = names)) +
-  geom_qq() +
-  geom_qq_line() +
-  theme_classic() +
-  plot_style()
-
-perform_dat <- inner_join(ind_predictors, costs, by="sub")
+perform_dat <- inner_join(ind_predictors, costs, by = "sub")
 
 write_csv(perform_dat, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_dat.csv")
