@@ -21,10 +21,16 @@ split_by_block <- read_csv(
   na = c("","NA")
 )
 
+split_by_block_ge <- read_csv(
+  "split_by_block_ge.csv",
+  na = c("","NA")
+)
+
+
 #create ind_predictors using the split_by_block df
 ind_predictors <- split_by_block |>
   filter(block == "st") |>
-  select(sub:TE)
+  select(sub:general_errors_mean)
 
 
 #create costs df (difference scores in rt and acc per sub)
@@ -39,3 +45,19 @@ costs <- averages |>
 perform_dat <- inner_join(ind_predictors, costs, by = "sub")
 
 write_csv(perform_dat, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_dat.csv")
+
+
+# and impact compared to cohs ---------------------------------------------
+cohs_preds <- split_by_block |>
+  filter(block == "st") |>
+  select(sub, auto, rout)
+
+perform_cohs <- inner_join(cohs_preds, costs, by = "sub")
+
+write_csv(perform_cohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_cohs.csv")
+
+
+
+# with ge -----------------------------------------------------------------
+
+

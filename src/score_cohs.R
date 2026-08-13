@@ -34,17 +34,16 @@ averages$sub <- as.factor(averages$sub)
 #using psych package, organise according to automaticity and routine
 #Following guide by Revelle (2025)
 
-#routine = 1, 4, 6, 7, 10, 12, 13, 14, 15, 17, 18, 20, 22, 24, 27
+#routine = 1, 2, 4, 6, 7, 10, 12, 13, 14, 15, 17, 18, 20, 22, 27
 
-#automaticity = 2, 3, 5, 8, 9, 11, 16, 19, 21, 23, 25, 26
+#automaticity = 3, 5, 8, 9, 11, 16, 19, 21, 23, 25, 26
 
 key <- list(
-  rout = c("cohs_1", "cohs_4", "cohs_6", "cohs_7", "cohs_10", "cohs_12",
-           "cohs_13", "cohs_14", "cohs_15", "cohs_17", "cohs_18",
-           "cohs_20", "cohs_22", "cohs_24", "cohs_27"),
-  auto = c("cohs_2", "cohs_3", "cohs_5", "cohs_8", "cohs_9", "cohs_11",
-           "cohs_16", "cohs_19", "cohs_21", "cohs_23", "cohs_25",
-           "cohs_26")
+  rout = c("cohs_1", "cohs_2", "cohs_4", "cohs_6", "cohs_7", "cohs_10",
+           "cohs_12", "cohs_13", "cohs_14", "cohs_15", "cohs_17",
+           "cohs_18", "cohs_20", "cohs_22", "cohs_27"),
+  auto = c("cohs_3", "cohs_5", "cohs_8", "cohs_9", "cohs_11", "cohs_16",
+           "cohs_19", "cohs_21", "cohs_23", "cohs_25", "cohs_26")
 )
 
 #create scale

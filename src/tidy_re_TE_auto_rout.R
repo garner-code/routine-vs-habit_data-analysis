@@ -62,17 +62,18 @@ write_csv(long_re_te_auto_rout, "C:/Users/Sadie/Repos/routine-vs-habit_data-anal
 
 #long except split by mt and st
 
-split_by_block <- averages_democohs |>
-  select(sub:switch, reclicks_mean, TE, auto, rout) |>
-  filter(ses == 4) |>
-  pivot_wider(
-    names_from = switch,
-    values_from = c("reclicks_mean", "TE")
-  ) |>
-  mutate(
-    reclicks_mean = reclicks_mean_1,
-    TE = TE_0
-  ) |>
-  select(sub, block, reclicks_mean, TE, auto, rout)
+split_by_block_ge <- averages_democohs |>
+    select(sub:switch, reclicks_mean, TE, general_errors_mean, auto, rout) |>
+    filter(ses == 4) |>
+    pivot_wider(
+      names_from = switch,
+      values_from = c("reclicks_mean", "TE", "general_errors_mean")
+    ) |>
+    mutate(
+      reclicks_mean = reclicks_mean_1,
+      TE = TE_0,
+      general_errors_stay = general_errors_mean_0   #adding stay for now - but this is imperfect
+    ) |>
+    select(sub, block, reclicks_mean, TE, general_errors_stay, auto, rout)
 
-write_csv(split_by_block, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/split_by_block.csv")
+write_csv(split_by_block_ge, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/split_by_block_ge.csv")

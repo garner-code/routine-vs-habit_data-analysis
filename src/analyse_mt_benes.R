@@ -4,7 +4,6 @@
 ################################################################################
 
 library(tidyverse)
-library(skimr)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -19,8 +18,10 @@ perform_dat <- read_csv(
   na = c("", "NA")
 )
 
-
-# analyse -----------------------------------------------------------------
+perform_cohs <- read_csv(
+  "perform_cohs.csv",
+  na = c("", "NA")
+)
 
 
 # Reclicks only -----------------------------------------------------------
@@ -78,9 +79,40 @@ summary(acc_both_mod)
 
 #so TE and reclicks reliably predicts accuracy, but not rt.
 
+################################################################################
+###########                 NOW COHS                              ##############
+################################################################################
+
+# auto only ---------------------------------------------------------------
+
+rt_auto_mod <- lm(RT_cost ~ auto, data = perform_cohs)
+summary(rt_auto_mod)
+#ns
+
+acc_auto_mod <- lm(acc_cost ~ auto, data = perform_cohs)
+summary(acc_auto_mod)
+#ns
 
 
+# rout only ---------------------------------------------------------------
+
+rt_rout_mod <- lm(RT_cost ~ rout, data = perform_cohs)
+summary(rt_rout_mod)
+#ns
+
+acc_rout_mod <- lm(acc_cost ~ rout, data = perform_cohs)
+summary(acc_rout_mod)
+#ns
 
 
+# auto and rout -----------------------------------------------------------
+
+rt_auto_rout_mod <- lm(RT_cost ~ auto + rout, data = perform_cohs)
+summary(rt_auto_rout_mod)
+#ns
+
+acc_auto_rout_mod <- lm(acc_cost ~ auto + rout, data = perform_cohs)
+summary(acc_auto_rout_mod)
+#ns
 
 
