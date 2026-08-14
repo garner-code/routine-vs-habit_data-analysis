@@ -60,7 +60,6 @@ grp_data <- data.frame(
 # grp_ons <- data.frame(
 #   sub = integer(), ses = integer(), t = integer(), context = integer(), on = integer()
 # )
-
 # for each subject and session, use the function 'get_data' to load their raw data and attach it to
 # our 'grp_data' data frame with one measurement (row) per event (click or hover)
 for (sub in subs) {
@@ -78,12 +77,36 @@ for (sub in subs) {
 grp_data <- grp_data %>% mutate(door_nc = case_when(door_cc==1 ~ 0, door_oc == 1 ~ 0, .default=1), .after="door_oc")
 
 grp_data <- get_rts(grp_data) # calculate RTs and add to the data frame
-grp_data <- get_task_jumps(grp_data) # now calculate task_jumps per trial
+grp_data <- get_task_jumps(grp_data, "res") # now calculate task_jumps per trial
 grp_data <- get_reclicks(grp_data) # and now we calculate reclicks
 
+# now calculate TE for grouping with summary level data below
+# Goal: sum transitions over periods where there has not been a switch trial - i.e.
+# between blocks of stay trials.
+TE_summary <- grp_data %>%
+  mutate(block = ifelse(is.na(block), "lu", block)) %>%
+  group_by(sub, ses, block) %>%
+  mutate(stay_set = case_when(
+    switch == 1 ~ 0L,
+    TRUE ~ cumsum(lag(switch, default=0) == 1 & switch == 0) + 1L
+  )
+  ) %>% filter(stay_set > 0) %>%
+  group_by(sub, ses, block, context, stay_set) %>%
+  group_modify(~ get_TE_scores(.x)) %>%
+  ungroup()
+
 # now rename the blocks so only one mt block (instead of b-mt1 & b-mt2). Do the same for the
-# single task blocks
+# single task blocks, for both the grp_data and the TE summary data
 grp_data <- grp_data %>% mutate(block = str_extract(block, "(?<=b-)[a-z]+"))
+TE_summary <- TE_summary %>% mutate(block = str_extract(block, "(?<=b-)[a-z]+")) %>%
+  summarise(
+    .by=c(sub, ses, block, context),
+    TE = mean(TE, na.rm=TRUE)
+  ) %>%
+  summarise(
+    .by=c(sub, ses, block),
+    TE = mean(TE, na.rm=TRUE)
+  )
 
 # save the formatted data
 fnl <- file.path(project_path, "res", paste(paste(sv_name, "evt", sep = "_"), ".csv", sep = ""))
@@ -93,8 +116,8 @@ write_csv(grp_data, fnl)
 # by trial
 res <- grp_data %>%
   arrange(sub, ses, subses, t, block, context, train_type) %>%
-  group_by(sub, ses, subses, t, block, context, train_type) %>%
   summarise(
+    .by=c(sub, ses, subses, t, block, context, train_type),
     switch = max(switch),
     n_clicks = n(),
     n_cc = sum(door_cc),
@@ -106,10 +129,10 @@ res <- grp_data %>%
     setting_errors = n_oc / n_clicks,
     general_errors = n_nc / n_clicks,
     all_errors = (n_oc + n_nc) / n_clicks
-) %>% ungroup()
+  ) %>% ungroup()
 
 # now lets get the RT data we want
-max_cutoff <- 2.0 # anything less than 2 is weird
+max_cutoff <- 2.0 # anything more than 2 is weird
 sd_cut <- 2.5 # anything more than 2.5 SDs above the mean is also weird
 rt_res <- grp_data %>%
   filter(start_rt < max_cutoff,
@@ -124,15 +147,14 @@ rt_res <- grp_data %>%
          sd_press = sd(press_duration, na.rm = TRUE),
          press_cut_off = mean_press + sd_cut * sd_press,
          dur = ifelse(press_duration > press_cut_off, NA, press_duration)
-         ) %>%
+  ) %>%
   ungroup() %>%
-  group_by(sub, ses, subses, t, block, context, train_type) %>%
-  summarise(n_rt_outliers = sum(is.na(rt)),
+  summarise(.by = c(sub, ses, subses, t, block, context, train_type),
+            n_rt_outliers = sum(is.na(rt)),
             rt = mean(rt, na.rm = TRUE),
             n_dur_outliers = sum(is.na(dur)),
             dur = mean(dur, na.rm = TRUE),
-            N = n()) %>%
-  ungroup()
+            N = n())
 
 # and put the data back together
 res <- res %>%
@@ -142,32 +164,18 @@ fnl <- file.path(project_path, "res", paste(paste(sv_name, "trl", sep = "_"), ".
 write_csv(res, fnl)
 
 # now what I want to do is provide the condition level summary statistics
-# calculate TE per subject x block x context
-# below calls functions that take the transition counts per trial
-# and then sums the transition matrices for each trial
-# rather than counting up transitions across trials.
-# this might mean that we lose the transitions as people move from
-# one trial to another, but this is fairest as the trials have
-# previously been stacked together in ways that are non-sequential
-# e.g. the two multitasking blocks.
-TE_summary <- grp_data %>%
-                group_by(sub, ses, block, context, switch) %>%
-                group_modify(~ get_TE_scores(.x)) %>%
-                ungroup() %>%
-  group_by(sub, ses, block, switch) %>%
-   summarise(M_sum_TE = mean(sum_TE), # sum_TE - is summing the row entropies for each context, and then taking the average of the two contexts
-             M_TE = mean(mu_TE)) # mean_TE - is taking the average of the row entropies for each context, and then averaging across contexts
 
 # get summary statistics for remaining key DVs
 summary_stats <- res %>%
   group_by(sub, ses, context, block, switch, train_type) %>%
-  select(accuracy, setting_errors, general_errors,  all_errors, task_jumps, reclicks, rt, dur) %>%
+  select(accuracy, setting_errors, general_errors, all_errors, task_jumps, reclicks, rt, dur) %>%
   summarise(
     across(
       .cols = where(is.numeric),
       .fns = list(mean = ~mean(.x, na.rm = TRUE)),
       .names = "{.col}_{.fn}"
-    )
+    ),
+    .groups = "drop_last"
   ) %>%
   ungroup() %>%
   group_by(sub, ses, block, switch, train_type) %>%
@@ -177,16 +185,19 @@ summary_stats <- res %>%
       .cols = where(is.numeric),
       .fns = list(mean = ~mean(.x, na.rm = TRUE)),
       .names = "{.col}"
-    )
+    ),
+    .groups = "drop_last"
   ) %>%
   ungroup()
 
-# now add the TE scores
+
 summary_stats <- summary_stats %>%
   left_join(TE_summary,
-            by=c('sub','ses','block','switch')
-            )
-
+            by=c('sub','ses','block')
+  ) %>%
+  mutate(
+    TE = ifelse(switch == 1, NA, TE)
+  )
 
 fnms <- file.path(project_path, "res", paste(paste(sv_name, "avg", sep = "_"), ".csv", sep = ""))
 write_csv(summary_stats, fnms)
