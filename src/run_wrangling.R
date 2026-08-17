@@ -60,7 +60,6 @@ grp_data <- data.frame(
 # grp_ons <- data.frame(
 #   sub = integer(), ses = integer(), t = integer(), context = integer(), on = integer()
 # )
-
 # for each subject and session, use the function 'get_data' to load their raw data and attach it to
 # our 'grp_data' data frame with one measurement (row) per event (click or hover)
 for (sub in subs) {
@@ -78,7 +77,7 @@ for (sub in subs) {
 grp_data <- grp_data %>% mutate(door_nc = case_when(door_cc==1 ~ 0, door_oc == 1 ~ 0, .default=1), .after="door_oc")
 
 grp_data <- get_rts(grp_data) # calculate RTs and add to the data frame
-grp_data <- get_task_jumps(grp_data) # now calculate task_jumps per trial
+grp_data <- get_task_jumps(grp_data, "res") # now calculate task_jumps per trial
 grp_data <- get_reclicks(grp_data) # and now we calculate reclicks
 
 # now calculate TE for grouping with summary level data below
@@ -91,7 +90,7 @@ TE_summary <- grp_data %>%
     switch == 1 ~ 0L,
     TRUE ~ cumsum(lag(switch, default=0) == 1 & switch == 0) + 1L
   )
-) %>% filter(stay_set > 0) %>%
+  ) %>% filter(stay_set > 0) %>%
   group_by(sub, ses, block, context, stay_set) %>%
   group_modify(~ get_TE_scores(.x)) %>%
   ungroup()
@@ -128,8 +127,9 @@ res <- grp_data %>%
     reclicks = first(reclicks),
     accuracy = n_cc / n_clicks,
     setting_errors = n_oc / n_clicks,
-    general_errors = n_nc / n_clicks
-) %>% ungroup()
+    general_errors = n_nc / n_clicks,
+    all_errors = (n_oc + n_nc) / n_clicks
+  ) %>% ungroup()
 
 # now lets get the RT data we want
 max_cutoff <- 2.0 # anything more than 2 is weird
@@ -147,7 +147,7 @@ rt_res <- grp_data %>%
          sd_press = sd(press_duration, na.rm = TRUE),
          press_cut_off = mean_press + sd_cut * sd_press,
          dur = ifelse(press_duration > press_cut_off, NA, press_duration)
-         ) %>%
+  ) %>%
   ungroup() %>%
   summarise(.by = c(sub, ses, subses, t, block, context, train_type),
             n_rt_outliers = sum(is.na(rt)),
@@ -168,7 +168,7 @@ write_csv(res, fnl)
 # get summary statistics for remaining key DVs
 summary_stats <- res %>%
   group_by(sub, ses, context, block, switch, train_type) %>%
-  select(accuracy, setting_errors, general_errors, task_jumps, reclicks, rt, dur) %>%
+  select(accuracy, setting_errors, general_errors, all_errors, task_jumps, reclicks, rt, dur) %>%
   summarise(
     across(
       .cols = where(is.numeric),
@@ -194,7 +194,7 @@ summary_stats <- res %>%
 summary_stats <- summary_stats %>%
   left_join(TE_summary,
             by=c('sub','ses','block')
-            ) %>%
+  ) %>%
   mutate(
     TE = ifelse(switch == 1, NA, TE)
   )

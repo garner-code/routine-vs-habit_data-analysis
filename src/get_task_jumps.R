@@ -16,7 +16,7 @@
 # If the target on the previous trial was at location $B_1$, the same selections
 # on the current trial would incur a task jump score of three.
 
-get_task_jumps <- function(dat){
+get_task_jumps <- function(dat, res_path){ # res_path is the path to the results folder, where we'll save a csv of the number of nc and non-nc trials per subject, ses, and block.
 
   # get the value of the context on the previous trial, to help us with coding task
   # jumps on switch trials
@@ -34,8 +34,6 @@ get_task_jumps <- function(dat){
       by = c("sub", "ses", "block", "t")
     )
 
-  # The below needs recoding so that we count each time there was
-  # a jump from A to B, and we don't count jumps to and from nc locations.
   # now get trial numbers for each participant where there was a
   # 'nc' click, as this limits our ability to draw conclusions about jumps between
   # Task A and Task B
@@ -43,13 +41,23 @@ get_task_jumps <- function(dat){
     group_by(sub, ses, block, t) %>%
     summarise(nc = sum(door_nc == 1) > 0, .groups='drop')
 
+  # for each subject, ses, block, and trial type, count the number of nc trials and non-nc trials
+  nc_counts <- nc_trials %>%
+    group_by(sub, ses, block) %>%
+    summarise(
+      n_nc_trials = sum(nc),
+      n_non_nc_trials = sum(!nc),
+      .groups = 'drop'
+    )
+  # save the number of nc trials and non-nc trials to a csv file for reference
+  write.csv(nc_counts, file = file.path(res_path, "routine_vs_habit_nc_trial_counts.csv"), row.names = FALSE)
+
   # now, join the two datasets back together, and drop trials with nc clicks
   tmp <- dat %>% left_join(nc_trials, by=c('sub', 'ses', 'block', 't')) %>%
     filter(nc == FALSE) %>%
     select(-nc)
 
   # now, lets count the number of task jumps per trial.
-
   n_jumps <- tmp %>%
     arrange(sub, ses, block, t) %>%
     group_by(sub, ses, block, t) %>%

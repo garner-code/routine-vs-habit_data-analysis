@@ -19,7 +19,7 @@ get_reclicks <- function(dat){
       reclicks = if_else(
         first(door_oc) == 0,
         0L,
-        sum(cumprod(door_oc))
+        sum(cumprod(door_oc)) # this will take the sum of the door_oc events that happen up until the first non-door_oc event
       ),
       .groups = "drop"
     ) %>%
