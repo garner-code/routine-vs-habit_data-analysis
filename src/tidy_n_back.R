@@ -19,6 +19,16 @@ long_rt_tj <- read_csv(
   na = c("", "NA")
 )
 
+n_back_averages <- read_csv(
+  "routine_vs_habit_n_back_averages.csv",
+  na = c("", "NA")
+)
+
+counts <- read_csv(
+  "routine_vs_habit_nc_trial_counts.csv",
+  na = c("", "NA")
+)
+
 
 # tidying time ------------------------------------------------------------
 
@@ -58,7 +68,27 @@ write_csv(n_back_averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/
 #finally lets make a long form of this df
 #tbd if I ever need it.
 
-# outliers ----------------------------------------------------------------
+# impact of counts and n-back ----------------------------------------------------------------
+df <- counts |>
+  filter(ses == 4) |>
+  pivot_wider(
+    names_from = "block",
+    values_from = c("n_nc_trials", "n_non_nc_trials")
+  ) |>
+  rename(
+    nc_mt1 = `n_nc_trials_b-mt1`,
+    nc_mt2 = `n_nc_trials_b-mt2`
+  ) |>
+  select(sub, nc_mt1, nc_mt2)
 
-n_back_averages |>
-  filter(sens > 0.7, spec > 0.8)
+n_back_tjs <- inner_join(df, n_back_averages, by = "sub") |>
+  relocate(sub, ses, block)
+
+write_csv(n_back_tjs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_n_back_task_jumps.csv")
+
+n_back_tjs |>
+  filter(nc_mt1 < 5, nc_mt2 < 5) |>
+  filter(sens > 0.70, spec > 0.80)
+
+
+

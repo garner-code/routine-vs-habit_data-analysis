@@ -23,23 +23,26 @@ split_by_block <- read_csv(
 
 
 #create ind_predictors using the split_by_block df
+#using stay trials for errors
 ind_predictors <- split_by_block |>
   filter(block == "st") |>
-  select(sub:general_errors_mean)
+  select(sub:errors_stay)
 
 
-#create costs df (difference scores in rt and acc per sub)
+#create costs df (difference scores in rt and errors per sub)
 costs <- averages |>
   filter(ses == 4 & switch == 0) |>
   group_by(sub) |>
   summarise(
     RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
-    acc_cost = accuracy_mean[block == "mt"] - accuracy_mean[block == "st"]
+    error_cost = all_errors_mean[block == "mt"] - all_errors_mean[block == "st"]
   )
+write_csv(costs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/costs.csv")
+
 
 perform_dat <- inner_join(ind_predictors, costs, by = "sub")
 
-write_csv(perform_dat, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_dat.csv")
+write_csv(perform_dat, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_dat_errors.csv")
 
 
 # and impact compared to cohs ---------------------------------------------
@@ -51,8 +54,5 @@ perform_cohs <- inner_join(cohs_preds, costs, by = "sub")
 
 write_csv(perform_cohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_cohs.csv")
 
-
-
-# with ge -----------------------------------------------------------------
 
 

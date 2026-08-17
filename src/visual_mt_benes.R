@@ -18,27 +18,23 @@ averages <- read_csv(
 )
 
 perform_dat <- read_csv(
-  "perform_dat.csv",
+  "perform_dat_errors.csv",
+  na = c("", "NA")
+)
+
+costs <- read_csv(
+  "costs.csv",
   na = c("", "NA")
 )
 
 
 # visualise normalcy ------------------------------------------------------
 
-#create costs df (difference scores in rt and acc per sub)
-costs <- averages |>
-  filter(ses == 4 & switch == 0) |>
-  group_by(sub) |>
-  summarise(
-    RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
-    acc_cost = accuracy_mean[block == "mt"] - accuracy_mean[block == "st"]
-  )
-
 #check normalcy of costs - box and qq
 
 costs |>
   pivot_longer(
-    cols = c("RT_cost", "acc_cost"),
+    cols = c("RT_cost", "error_cost"),
     names_to = "names",
     values_to = "values"
   ) |>
@@ -51,7 +47,7 @@ costs |>
 #no transform qq
 costs |>
   pivot_longer(
-    cols = c("RT_cost", "acc_cost"),
+    cols = c("RT_cost", "error_cost"),
     names_to = "names",
     values_to = "values"
   ) |>
@@ -73,7 +69,7 @@ ggsave(
 #sqrt transform qq - future me: some values get lost in this transformation (= 0)
 costs |>
   pivot_longer(
-    cols = c("RT_cost", "acc_cost"),
+    cols = c("RT_cost", "error_cost"),
     names_to = "names",
     values_to = "values"
   ) |>
@@ -96,7 +92,7 @@ ggsave(
 
 costs |>
   pivot_longer(
-    cols = c("RT_cost", "acc_cost"),
+    cols = c("RT_cost", "error_cost"),
     names_to = "names",
     values_to = "values"
   ) |>

@@ -81,4 +81,4 @@ split_by_block <- averages_democohs |>
   ) |>
   select(sub, block, reclicks_mean, TE, errors_stay, errors_switch, auto, rout)
 
-write_csv(split_by_block, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/split_by_block_ge.csv")
+write_csv(split_by_block, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/split_by_block.csv")
