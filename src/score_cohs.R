@@ -23,7 +23,7 @@ COHS <- read_csv(
   na = c("", "NA")
 )
 
-#make sub a factor (forlater joining)
+#make sub a factor (for later joining)
 averages$sub <- as.factor(averages$sub)
 
 
@@ -49,27 +49,8 @@ key <- list(
 #create scale
 scale <- scoreItems(key, COHS)
 
-#short output:
-print(scale)
-#long output:
-print(scale, short = FALSE)
-
-#create raw scores, then view head and tail (rounded to 2 d.p.)
+#create raw scores
 raw_scores <- scale$scores
-headTail (round(raw_scores, 2))
-
-#describe
-describe(raw_scores)
-
-#graph - commented out is a line to save the graph :)
-pairs.panels(raw_scores, pch = '.')
-ggsave(
-  "cohs_data_distrib.png",
-  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
-  width = 14,
-  height = 8
-)
-
 
 # make df with sub number mapped onto raw scores --------------------------
 
@@ -80,10 +61,6 @@ raw_df <- raw_df |>
   relocate(sub)
 
 raw_df$sub <- as.factor(raw_df$sub)
-
-#histo built into psych package
-histogram_cohs(raw_df, sub, auto)
-
 
 # join df with averages onto averages --------------------------------------------
 

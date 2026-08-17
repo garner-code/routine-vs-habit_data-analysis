@@ -35,7 +35,7 @@ costs <- averages |>
   summarise(
     RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
     acc_cost = accuracy_mean[block == "mt"] - accuracy_mean[block == "st"]
-    )
+  )
 
 perform_dat <- inner_join(ind_predictors, costs, by = "sub")
 

@@ -17,6 +17,10 @@ n_back <- read_csv(
   na = c("", "NA")
 )
 
+n_back_averages <- read_csv(
+  "routine_vs_habit_n_back_averages.csv",
+  na = c("", "NA")
+)
 
 # distribution ----------------------------------------------------------------
 
@@ -44,13 +48,6 @@ ggsave(
   height = 8
 )
 
-#indicates the following are outliers (per IQR)
-n_back |>
-  filter(sens < 0.45)
-
-n_back |>
-  filter(spec < 0.82)
-
 #qq plot
 
 n_back |>
@@ -72,3 +69,11 @@ ggsave(
   width = 14,
   height = 8
 )
+
+
+# potential outlier cut offs ----------------------------------------------
+#the rationale is we want proof that they are in fact multitasking
+#i am not too concerned with if they are doing it super well
+#just well enough to indicate they are trying
+
+

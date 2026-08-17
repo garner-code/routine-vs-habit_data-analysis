@@ -1,6 +1,6 @@
 ################################################################################
 ##########       A script to output wide and long dfs with        ##############
-##########        reclicks, TE, automaticity and routine          ##############
+##########      reclicks, TE, errors, automaticity and routine    ##############
 ##########                  Sadie Lane, 2026                      ##############
 ################################################################################
 
@@ -20,17 +20,19 @@ averages_democohs <- read_csv(
 #wide
 
 wide_re_te_auto_rout <- averages_democohs |>
-  select(sub:switch, reclicks_mean, TE, auto, rout) |>
+  select(sub:switch, reclicks_mean, TE, all_errors_mean, auto, rout) |>
   filter(ses == 4) |>
   pivot_wider(
     names_from = switch,
-    values_from = c("reclicks_mean", "TE")
+    values_from = c("reclicks_mean", "TE", "all_errors_mean")
   ) |>
-  mutate(
+  rename(
     reclicks_mean = reclicks_mean_1,
-    TE = TE_0
+    TE = TE_0,
+    errors_switch = all_errors_mean_1,
+    errors_stay = all_errors_mean_0
   ) |>
-  select(sub, block, reclicks_mean, TE, auto, rout) |>
+  select(sub, block, reclicks_mean, TE, errors_stay, errors_switch, auto, rout) |>
   pivot_wider(
     names_from = block,
     values_from = c("reclicks_mean", "TE", "auto", "rout")
@@ -41,17 +43,19 @@ write_csv(wide_re_te_auto_rout, "C:/Users/Sadie/Repos/routine-vs-habit_data-anal
 #long
 
 long_re_te_auto_rout <- averages_democohs |>
-  select(sub:switch, reclicks_mean, TE, auto, rout) |>
+  select(sub:switch, reclicks_mean, TE, all_errors_mean, auto, rout) |>
   filter(ses == 4) |>
   pivot_wider(
     names_from = switch,
-    values_from = c("reclicks_mean", "TE")
+    values_from = c("reclicks_mean", "TE", "all_errors_mean")
   ) |>
-  mutate(
+  rename(
     reclicks_mean = reclicks_mean_1,
-    TE = TE_0
+    TE = TE_0,
+    errors_switch = all_errors_mean_1,
+    errors_stay = all_errors_mean_0
   ) |>
-  select(sub, block, reclicks_mean, TE, auto, rout) |>
+  select(sub, block, reclicks_mean, TE, errors_stay, errors_switch, auto, rout) |>
   pivot_longer(
     cols = reclicks_mean:rout,
     names_to = "dv",
@@ -63,16 +67,18 @@ write_csv(long_re_te_auto_rout, "C:/Users/Sadie/Repos/routine-vs-habit_data-anal
 #long except split by mt and st
 
 split_by_block <- averages_democohs |>
-    select(sub:switch, reclicks_mean, TE, auto, rout) |>
-    filter(ses == 4) |>
-    pivot_wider(
-      names_from = switch,
-      values_from = c("reclicks_mean", "TE")
-    ) |>
-    mutate(
-      reclicks_mean = reclicks_mean_1,
-      TE = TE_0
-    ) |>
-    select(sub, block, reclicks_mean, TE, auto, rout)
+  select(sub:switch, reclicks_mean, TE, all_errors_mean, auto, rout) |>
+  filter(ses == 4) |>
+  pivot_wider(
+    names_from = switch,
+    values_from = c("reclicks_mean", "TE", "all_errors_mean")
+  ) |>
+  rename(
+    reclicks_mean = reclicks_mean_1,
+    TE = TE_0,
+    errors_switch = all_errors_mean_1,
+    errors_stay = all_errors_mean_0
+  ) |>
+  select(sub, block, reclicks_mean, TE, errors_stay, errors_switch, auto, rout)
 
 write_csv(split_by_block, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/split_by_block_ge.csv")

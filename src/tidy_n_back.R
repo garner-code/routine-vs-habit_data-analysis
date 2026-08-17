@@ -14,8 +14,8 @@ n_back <- read_csv(
   na = c("", "NA")
 )
 
-long_rt_acc <- read_csv(
-  "long_rt_acc.csv",
+long_rt_tj <- read_csv(
+  "long_rt_tj.csv",
   na = c("", "NA")
 )
 
@@ -31,16 +31,16 @@ write_csv(n_back_mt, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/ro
 
 #lets also join the data to the averages data
 
-df <- long_rt_acc |>
+df <- long_rt_tj |>
   filter(block == "mt") |>
   pivot_wider(
     names_from = dv:switch,
-    values_from = rt_or_acc
+    values_from = rt_or_tj
   ) |>
   rename(
-    acc_mean_stay = accuracy_mean_Stay,
+    tjs_mean_stay = task_jumps_mean_Stay,
     rt_mean_stay = rt_mean_Stay,
-    acc_mean_switch = accuracy_mean_Switch,
+    tjs_mean_switch = task_jumps_mean_Switch,
     rt_mean_switch = rt_mean_Switch
   )
 
@@ -56,4 +56,9 @@ n_back_averages <- n_back_averages |>
 write_csv(n_back_averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_n_back_averages.csv")
 
 #finally lets make a long form of this df
+#tbd if I ever need it.
 
+# outliers ----------------------------------------------------------------
+
+n_back_averages |>
+  filter(sens > 0.7, spec > 0.8)

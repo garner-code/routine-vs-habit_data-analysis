@@ -10,6 +10,19 @@ library(tidyverse)
 #set to your wd
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
+joint_averages_cohs <- read_csv(
+  "joint_averages_cohs.csv",
+  na = c("", "NA")
+)
+
+averages <- read_csv(
+  "routine_vs_habit_avg.csv",
+  na = c("", "NA")
+)
+#make sub a factor (for later joining)
+joint_averages_cohs$sub <- as.factor(joint_averages_cohs$sub)
+averages$sub <- as.factor(averages$sub)
+
 #now read in qualtrics csv file, relabel cols and assign datatypes
 raw_democohs <- read_csv(
   "demo_cohs_raw.csv",
