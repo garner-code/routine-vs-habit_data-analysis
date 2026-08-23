@@ -36,6 +36,8 @@ mcounts <- counts |>
 
 summary(mcounts$mean_n_nc)
 
+#thus IQR outlier is
+
 # min threshold for n_nc_trials -------------------------------------------
 #n_nc_trials = total number of trials included in the task jumps analysis
 #bc we exclude trials where they had ANY general errors
@@ -46,11 +48,23 @@ mcounts |>
   ggplot(aes(y = mean_n_nc)) +
   geom_boxplot(alpha = 0.3, fill = "cadetblue") +
   plot_style() +
-  theme_classic()
+  theme_classic() +
+  geom_hline(yintercept = 6)
 
 mcounts |>
-  ggplot(aes(y = mean_n_nc, x = sub))
-  geom_histogram(binwidth = 0.01)
+  ggplot(aes(x = mean_n_nc)) +
+  geom_histogram(binwidth = 0.5, fill = "purple") +
+  scale_x_continuous(breaks = seq(0, 60, by = 5)) +
+  plot_style() +
+  theme_classic() +
+  geom_vline(xintercept = 6.5, linetype = "dotted") +
+  geom_vline(xintercept = 11, linetype = "dotted") +
+  labs(
+    subtitle = "IQR outlier is anything > 6.5, lose n = 16\n> 11, lose n =9",
+  )
+
+mcounts |>
+  filter(mean_n_nc > 15)
 
 #calc outliers
 
