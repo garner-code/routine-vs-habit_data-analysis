@@ -27,33 +27,14 @@ counts <- read_csv(
 
 # tidy --------------------------------------------------------------------
 
-mt1 <- counts |>
-  filter(ses == 4, block == "b-mt1")
+mcounts <- counts |>
+  filter(ses == 4) |>
+  group_by(sub) |>
+  summarise(
+    mean_n_nc = mean(n_nc_trials)
+  )
 
-median(mt1$n_nc_trials)
-IQR(mt1$n_nc_trials)
-quantile(mt1$n_nc_trials, 0.75)
-quantile(mt1$n_nc_trials, 0.25)
-
-6 + 1.5*6
-#outliers at 15
-
-mt2 <- counts |>
-  filter(ses == 4, block == "b-mt2")
-
-median(mt2$n_nc_trials)
-IQR(mt2$n_nc_trials)
-quantile(mt2$n_nc_trials, 0.75)
-quantile(mt2$n_nc_trials, 0.25)
-
-2 + 1.5*2
-
-counts_outlierless <- counts |>
-  filter(ses == 4, n_nc_trials < 15)
-
-counts_outlierless |>
-  count(block == "b-st2")
-
+summary(mcounts$mean_n_nc)
 
 # min threshold for n_nc_trials -------------------------------------------
 #n_nc_trials = total number of trials included in the task jumps analysis
@@ -61,24 +42,17 @@ counts_outlierless |>
 #to avoid a trial being a "task jump" when they were in fact just confused/lost
 
 #boxplot
-counts |>
-  filter(ses == 4) |>
-  ggplot(aes(x = block, y = n_nc_trials, fill = block)) +
-  geom_text_repel(aes(label = sub)) +
-  geom_point(alpha = 0.3) +
-  geom_boxplot(alpha = 0.3) +
+mcounts |>
+  ggplot(aes(y = mean_n_nc)) +
+  geom_boxplot(alpha = 0.3, fill = "cadetblue") +
+  plot_style() +
   theme_classic()
 
+mcounts |>
+  ggplot(aes(y = mean_n_nc, x = sub))
+  geom_histogram(binwidth = 0.01)
 
-
-#violin plot
-counts |>
-  filter(ses == 4) |>
-  ggplot(aes(x = block, y = n_nc_trials, fill = block)) +
-  geom_text_repel(aes(label = sub)) +
-  geom_violin() +
-  theme_classic()
-
+#calc outliers
 
 
 # plotting potential outlier cutoffs --------------------------------------
