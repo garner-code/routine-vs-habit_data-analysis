@@ -76,4 +76,25 @@ ggsave(
 #i am not too concerned with if they are doing it super well
 #just well enough to indicate they are trying
 
+n_back |>
+  ggplot(aes(x = sens)) +
+  geom_histogram(binwidth = 0.01, fill = "#FF0000FF") +
+  plot_style() +
+  theme_classic() +
+  geom_vline(xintercept = 0.6, linetype = 3) +
+  geom_vline(xintercept = 0.55, linetype = 3) +
+  labs(
+    subtitle = "Heathcote et al. 2014 uses > 0.55 (yields n = 79)
+    0.6 yields n = 76
+    iqr cut off is too low (0.45 i.e. less than random)"
+  )
+
+n_back |>
+  ggplot(aes(x = spec)) +
+  geom_histogram(binwidth = 0.01, fill = "#00A08AFF") +
+  plot_style() +
+  theme_classic() +
+  labs(
+    subtitle = "include all?"
+  )
 
