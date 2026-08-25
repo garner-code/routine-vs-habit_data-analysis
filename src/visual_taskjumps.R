@@ -31,8 +31,20 @@ mcounts <- counts |>
   filter(ses == 4) |>
   group_by(sub) |>
   summarise(
-    mean_n_nc = mean(n_nc_trials)
+    mean_n_nc = mean(n_nc_trials),
+    mean_non = mean(n_non_nc_trials)
   )
+
+#sd is 10.4
+#grandmean is 4.72
+
+4.72 + 2.5*10.4
+#therefore 30.72
+
+4.72 + 3*10.4
+#therefore 35.92
+
+mean(mcounts$mean_n_nc)
 
 summary(mcounts$mean_n_nc)
 
@@ -58,16 +70,26 @@ mcounts |>
   plot_style() +
   theme_classic() +
   geom_vline(xintercept = 6.5, linetype = "dotted") +
-  geom_vline(xintercept = 11, linetype = "dotted") +
+  geom_vline(xintercept = 30.72, linetype = "dotted") +
+  geom_vline(xintercept = 35.92, linetype = "dotted") +
   labs(
-    subtitle = "IQR outlier is anything > 6.5, lose n = 16\n> 11, lose n =9",
+    subtitle = "IQR outlier is anything > 6.5, lose n = 16
+    mean + 2.5sd is anything > 30.72, lose n = 3
+    mean + 3sd is anything > 35.92, lose n = 2",
   )
 
+sni
 mcounts |>
-  filter(mean_n_nc > 15)
+  ggplot(aes(y = mean_non)) +
+  geom_boxplot()
 
-#calc outliers
+summary(mcounts$mean_non)
 
+x <- mean(mcounts$mean_non)
+y <- sd(mcounts$mean_non)
+
+mcounts |>
+  filter(mean_non < 73.5)
 
 # plotting potential outlier cutoffs --------------------------------------
 
@@ -80,6 +102,7 @@ counts_outlierless |>
   theme_classic()
 
 
-
+mcounts |>
+  filter(mean_n_nc > 30.72)
 
 
