@@ -12,7 +12,7 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 averages <- read_csv(
-  "routine_vs_habit_avg.csv",
+  "averages_no_tj_outs.csv",
   na = c("", "NA")
 )
 
@@ -35,10 +35,10 @@ costs <- averages |>
   group_by(sub) |>
   summarise(
     RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
-    error_cost = all_errors_mean[block == "mt"] - all_errors_mean[block == "st"]
+    error_cost = all_errors_mean[block == "mt"] - all_errors_mean[block == "st"],
+    tj_cost = task_jumps_mean[block == "mt"] - task_jumps_mean[block == "st"]
   )
 write_csv(costs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/costs.csv")
-
 
 perform_dat <- inner_join(ind_predictors, costs, by = "sub")
 

@@ -1,5 +1,5 @@
 ################################################################################
-############     Sadie Lane 2026 tidy response time, acc dif       #############
+#########      Sadie Lane 2026 tidy response time, task jump dif      ##########
 ################################################################################
 
 rm(list=ls())
@@ -10,10 +10,9 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 averages <- read_csv(
-  "routine_vs_habit_avg.csv",
+  "averages_no_tj_outs.csv",
   na = c("", "NA")
 )
-
 
 # long --------------------------------------------------------------------
 

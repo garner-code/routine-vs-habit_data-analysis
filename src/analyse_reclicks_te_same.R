@@ -16,6 +16,7 @@ split_by_block <- read_csv(
   na = c("", "NA")
 )
 
+#prior to any exclusions
 
 # tidy our data -----------------------------------------------------------
 
@@ -103,3 +104,14 @@ write_csv(
   spearman_sqrt,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_spearman_sqrt_reclicks_TE.csv"
 )
+
+# linear models -----------------------------------------------------------
+
+re_by_te_err_mod <- lm(reclicks_mean ~ TE + errors_stay,  data = split_by_block)
+
+summary(re_by_te_err_mod)
+
+#partial regression plot - TE versus reclicks and another with Error v reclicks
+
+
+

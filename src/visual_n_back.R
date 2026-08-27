@@ -93,8 +93,13 @@ n_back |>
   ggplot(aes(x = spec)) +
   geom_histogram(binwidth = 0.01, fill = "#00A08AFF") +
   plot_style() +
+  geom_vline(xintercept = 0.6, linetype = 3) +
+  geom_vline(xintercept = 0.55, linetype = 3) +
   theme_classic() +
   labs(
     subtitle = "include all?"
   )
+
+n_back |>
+  filter(sens < 0.55)
 

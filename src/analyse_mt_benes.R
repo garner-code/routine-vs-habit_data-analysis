@@ -3,6 +3,7 @@
 ############                  Sadie lane, 2026                  ################
 ################################################################################
 
+rm(list=ls())
 library(tidyverse)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
@@ -14,7 +15,7 @@ averages <- read_csv(
 )
 
 perform_dat <- read_csv(
-  "perform_dat.csv",
+  "perform_dat_errors.csv",
   na = c("", "NA")
 )
 
