@@ -292,3 +292,4 @@ all_errors_st |>
   labs(
     title = "iqr, then 2.5 and 3 sd"
   )
+
