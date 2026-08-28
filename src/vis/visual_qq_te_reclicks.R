@@ -31,7 +31,23 @@ reclicks_te <- split_by_block |>
     values_to = "reclicks_or_TE"
   )
 
-# run the analysis of TE corrd with reclicks as is and as sqrtd
+#i also want a dataset with just reclicks and just TE (at st) to check for outliers
+
+reclicks_only <- reclicks_te |>
+  filter(block == "st", dv == "Reclicks")
+
+te_only <- reclicks_te |>
+  filter(block == "st", dv == "TE")
+
+#finally with errors, look at all_errors variable
+
+all_errors_st <- split_by_block |>
+  filter(block == "st") |>
+  select(sub, block, errors_stay)
+
+
+# normalcy checks ---------------------------------------------------------
+
 reclicks_te |>
   ggplot(aes(sample = reclicks_or_TE, colour = dv)) +
   geom_qq() +
@@ -112,6 +128,37 @@ ggsave(
   height = 8
 )
 
+#all_errors st only normalcy check
+all_errors_st |>
+  ggplot(aes(sample = errors_stay)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  labs(
+    title = "no transform"
+  )
+
+#and with some transforms
+all_errors_st |>
+  ggplot(aes(sample = log(errors_stay + 0.0001))) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  labs(
+    title = "log transform"
+  )
+
+all_errors_st |>
+  ggplot(aes(sample = sqrt(errors_stay))) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  labs(
+    title = "sqrt transform"
+  )
 
 # thesis - st only with sub 30 --------------------------------------------
 
@@ -162,49 +209,87 @@ ggsave(
 # and some histograms while we are here -----------------------------------
 #histos aren't sqrtd
 
-reclicks_te |>
-  filter(dv == "reclicks_mean") |>
+summary(reclicks_only)
+re_iqr <- IQR(reclicks_only$reclicks_or_TE)
+re_iqr_out <- 2.625 + 1.5*re_iqr
+
+re_sd <- sd(reclicks_only$reclicks_or_TE)
+
+re_sd_2.5 <- 1.9801 + 2.5*re_sd
+re_sd_3 <- 1.9801 + 3*re_sd
+
+reclicks_only |>
   ggplot(aes(x = reclicks_or_TE)) +
   geom_histogram(binwidth = 0.1, colour = "#ECCBAEFF", fill = "#ECCBAEFF") +
-  facet_wrap(. ~ block) +
   plot_style() +
   theme_classic() +
+  geom_vline(xintercept = re_iqr_out, linetype = 3) +
+  geom_vline(xintercept = re_sd_2.5, linetype = 3) +
+  geom_vline(xintercept = re_sd_3, linetype = 3) +
   labs(
-    title = "reclicks freq distrib",
-    subtitle = "sub 30 excluded (15 mean reclicks)",
-    x = "mean reclicks"
-  ) +
-  theme(
-    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+    title = "in order: iqr, 2.5sd and 3sd"
   )
 
+
 ggsave(
-  "freq_histo_reclicks_faceted_no30.png",
+  "reclicks_st_outlier_check.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
-  width = 14,
+  width = 8,
   height = 8
 )
 
-reclicks_te |>
-  filter(sub != 30, dv == "TE") |>
+#now te
+summary(te_only)
+
+te_iqr <- IQR(te_only$reclicks_or_TE)
+te_iqr_out <- 0.7018 + te_iqr*1.5
+
+te_sd <- sd(te_only$reclicks_or_TE)
+te_mean <- mean(te_only$reclicks_or_TE)
+te_sd_2.5 <- te_mean + 2.5*te_sd
+te_sd_3 <- te_mean + 3*te_sd
+
+te_only |>
   ggplot(aes(x = reclicks_or_TE)) +
   geom_histogram(binwidth = 0.01, colour = "#046C9AFF", fill = "#046C9AFF") +
-  facet_wrap(. ~ block) +
   plot_style() +
   theme_classic() +
+  geom_vline(xintercept = te_iqr_out, linetype = 3) +
+  geom_vline(xintercept = te_sd_2.5, linetype = 3) +
+  geom_vline(xintercept = te_sd_3, linetype = 3) +
   labs(
-    title = "TE freq distrib",
-    subtitle = "sub 30 excluded (as in reclicks data)",
-    x = "mean TE score"
-  ) +
-  theme(
-    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+    title = "iqr, then 2.5 and 3 sd"
   )
+#nothing to be excluded :)
 
 ggsave(
-  "freq_histo_TE_faceted_no30.png",
+  "TE_st_outlier_check.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots"),
-  width = 14,
+  width = 8,
   height = 8
 )
+
+#finally, all_errors histo
+
+summary(all_errors_st)
+
+err_iqr <- IQR(all_errors_st$errors_stay)
+err_iqr_out <- 0.0476 + err_iqr*1.5
+
+err_sd <- sd(all_errors_st$errors_stay)
+err_mean <- mean(all_errors_st$errors_stay)
+err_sd_2.5 <- err_mean + 2.5*err_sd
+err_sd_3 <- err_mean + 3*err_sd
+
+all_errors_st |>
+  ggplot(aes(x = errors_stay)) +
+  geom_histogram(binwidth = 0.01) +
+  plot_style() +
+  theme_classic() +
+  geom_vline(xintercept = err_iqr_out, linetype = 3) +
+  geom_vline(xintercept = err_sd_2.5, linetype = 3) +
+  geom_vline(xintercept = err_sd_3, linetype = 3) +
+  labs(
+    title = "iqr, then 2.5 and 3 sd"
+  )
 
