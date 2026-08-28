@@ -111,14 +111,24 @@ write_csv(
 single <- split_by_block |>
   filter(block == "st")
 
-single_no_outs <- split_by_block |>
-  filter(block == "st", sub != 30)
+single_no_outs <- single |>
+  filter(errors_stay < 0.3) |>
+  filter(reclicks_mean < 6.5)
 
-re_by_te_err_mod <- lm(reclicks_mean ~ TE + errors_stay,  data = single)
+
+#now run analysis
+#first lets do no transform
+re_by_te_err_mod <- lm(reclicks_mean ~ TE + errors_stay,  data = single_no_outs)
 summary(re_by_te_err_mod)
 
-sqre_by_te_err_mod <- lm(sqrt(reclicks_mean) ~ TE + errors_stay,  data = single)
-summary
+re_by_te_mod <- lm(reclicks_mean ~ TE,  data = single_no_outs)
+summary(re_by_te_mod)
+
+
+
+
+sqt_re_by_te_err_mod <- lm(sqrt(reclicks_mean) ~ TE + errors_stay,  data = single)
+summary(sqt_re_by_te_err_mod)
 
 #partial regression plot - TE versus reclicks and another with Error v reclicks
 
