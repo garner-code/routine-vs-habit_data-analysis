@@ -107,9 +107,18 @@ write_csv(
 
 # linear models -----------------------------------------------------------
 
-re_by_te_err_mod <- lm(reclicks_mean ~ TE + errors_stay,  data = split_by_block)
+#make just st
+single <- split_by_block |>
+  filter(block == "st")
 
+single_no_outs <- split_by_block |>
+  filter(block == "st", sub != 30)
+
+re_by_te_err_mod <- lm(reclicks_mean ~ TE + errors_stay,  data = single)
 summary(re_by_te_err_mod)
+
+sqre_by_te_err_mod <- lm(sqrt(reclicks_mean) ~ TE + errors_stay,  data = single)
+summary
 
 #partial regression plot - TE versus reclicks and another with Error v reclicks
 
