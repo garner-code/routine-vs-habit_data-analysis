@@ -292,3 +292,7 @@ all_errors_st |>
   labs(
     title = "iqr, then 2.5 and 3 sd"
   )
+<<<<<<< HEAD
+=======
+
+>>>>>>> d5d959e4dbec7c722fbb00faa06adfa58280e7aa
