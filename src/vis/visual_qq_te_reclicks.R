@@ -293,3 +293,38 @@ all_errors_st |>
     title = "iqr, then 2.5 and 3 sd"
   )
 
+#lets look at qqnorms when mean + 2.5 taken out
+all_errors_st |>
+  filter(errors_stay < 0.3) |>
+  ggplot(aes(sample = errors_stay)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  labs(
+    title = "no transform"
+  )
+
+#and with some transforms
+all_errors_st |>
+  filter(errors_stay < 0.3) |>
+  ggplot(aes(sample = log(errors_stay + 0.0001))) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  labs(
+    title = "log transform"
+  )
+
+all_errors_st |>
+  filter(errors_stay < 0.3) |>
+  ggplot(aes(sample = sqrt(errors_stay))) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  plot_style() +
+  labs(
+    title = "sqrt transform"
+  )
+
