@@ -36,6 +36,9 @@ reclicks_te <- split_by_block |>
 reclicks_only <- reclicks_te |>
   filter(block == "st", dv == "Reclicks")
 
+reclicks_mt <- reclicks_te |>
+  filter(block == "mt", dv == "Reclicks")
+
 te_only <- reclicks_te |>
   filter(block == "st", dv == "TE")
 
@@ -326,5 +329,29 @@ all_errors_st |>
   plot_style() +
   labs(
     title = "sqrt transform"
+  )
+
+
+# reclicks mt -------------------------------------------------------------
+
+summary(reclicks_mt)
+mtre_iqr <- IQR(reclicks_mt$reclicks_or_TE)
+mtre_iqr_out <- 3.065 + 1.5*mtre_iqr
+
+mtre_sd <- sd(reclicks_mt$reclicks_or_TE)
+
+mtre_sd_2.5 <- 3.065 + 2.5*mtre_sd
+mtre_sd_3 <- 3.065 + 3*mtre_sd
+
+reclicks_mt |>
+  ggplot(aes(x = reclicks_or_TE)) +
+  geom_histogram(binwidth = 0.1, colour = "#ECCBAEFF", fill = "#ECCBAEFF") +
+  plot_style() +
+  theme_classic() +
+  geom_vline(xintercept = mtre_iqr_out, linetype = 3) +
+  geom_vline(xintercept = mtre_sd_2.5, linetype = 3) +
+  geom_vline(xintercept = mtre_sd_3, linetype = 3) +
+  labs(
+    title = "in order: iqr, 2.5sd and 3sd"
   )
 

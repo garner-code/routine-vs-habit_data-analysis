@@ -29,6 +29,7 @@ take_out <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
 averages <- averages %>%
   filter(!sub %in% take_out)
 
+#just to get an idea of some summary stats
 averages |>
   filter(ses == 4, switch == 0) |>
   group_by(block) |>
@@ -59,14 +60,6 @@ for_t_tests_log <- for_t_tests |>
     acc_st_log = log(accuracy_mean_st),
   ) |>
   select(sub, rt_mt_log:acc_st_log)
-
-for_t_tjs <- averages |>
-  filter(ses == 4 & switch == 0) |>
-  select(sub, block, rt_mean, accuracy_mean) |>
-  pivot_wider(
-    names_from = block,
-    values_from = c(rt_mean, accuracy_mean)
-  )
 
 averages |>
   filter(sub == 8) |>
