@@ -118,19 +118,25 @@ single_no_outs <- single |>
 
 #now run analysis
 #first lets do no transform
-re_by_te_err_mod <- lm(reclicks_mean ~ TE + errors_stay,  data = single_no_outs)
-summary(re_by_te_err_mod)
 
-re_by_te_mod <- lm(reclicks_mean ~ TE,  data = single_no_outs)
-summary(re_by_te_mod)
+rReclicks <- residuals(lm(reclicks_mean ~ errors_stay,  data = single_no_outs))
+rTE <- residuals(lm(TE ~ errors_stay, data = single_no_outs))
+
+errors_partialled <- data.frame(rReclicks, rTE)
+
+write_csv(errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/errors_partialled_reclicks_TE.csv")
 
 
+#with sqrt transform of reclicks, and with log transform of errors
 
+trsf_rReclicks <- residuals(lm(sqrt(reclicks_mean) ~ log(errors_stay + 0.001),  data = single_no_outs))
+trsf_rTE <- residuals(lm(TE ~ log(errors_stay + 0.001), data = single_no_outs))
 
-sqt_re_by_te_err_mod <- lm(sqrt(reclicks_mean) ~ TE + errors_stay,  data = single)
-summary(sqt_re_by_te_err_mod)
+trsf_m1 <- lm(trsf_rReclicks ~ trsf_rTE)
+summary(trsf_m1)
 
-#partial regression plot - TE versus reclicks and another with Error v reclicks
+trsf_errors_partialled <- data.frame(rReclicks, rTE)
 
+write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_errors_partialled_reclicks_TE.csv")
 
 
