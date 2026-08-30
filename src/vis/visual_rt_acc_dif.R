@@ -68,7 +68,7 @@ ggsave(
   height = 8,
 )
 
-#now accuracy
+#now task jumps
 
 averages |>
   filter(ses == 4) |>
@@ -78,9 +78,9 @@ averages |>
     block = factor(block, c("st", "mt"), c("Singletasking", "Multitasking"))
   ) |>
   summarise(
-    accuracy_mean = mean(accuracy_mean)
+    task_jumps_mean = mean(task_jumps_mean)
   ) |>
-  ggplot(aes(x = block, y = accuracy_mean, colour = block, fill = block)) +
+  ggplot(aes(x = block, y = task_jumps_mean, colour = block, fill = block)) +
   geom_violin(alpha = 0.3) +
   geom_point() +
   geom_line(aes(group = sub), alpha = 0.5, colour = "grey") +
@@ -94,12 +94,11 @@ averages |>
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
     axis.text.x = element_blank()
   ) +
-  ylim(c(0.1, 1)) +
   labs(
     title = "RT dif is not due to accuracy",
     subtitle = "Means\nStay: mt = 0.920, st = 0.952 \nSwitch: mt = 0.323,st = 0.351",
     x = "Block",
-    y = "Mean Accuracy",
+    y = "Task Jumps",
     colour = "Block",
     fill = "Block",
     alpha = "Block"
