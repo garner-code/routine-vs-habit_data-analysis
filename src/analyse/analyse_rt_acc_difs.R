@@ -17,7 +17,7 @@ averages <- read_csv(
 )
 
 outlierless <- read_csv(
-  "averages_no_tj_no_nback_outs.csv",
+  "averages_no_n_nc_no_nback_outs.csv",
   na = c("", "NA")
 )
 
@@ -82,7 +82,7 @@ for_t_tests_log <- for_t_tests |>
 
 
 #first with outliers taken out
-#which as a reminder is n_nc, tjs, and sens -
+#which as a reminder is n_nc, and sens -
 #(n-back, i.e. they weren't really mting)
 
 t_rt_outless <- with(for_t_tests, t.test(rt_mean_st, rt_mean_mt))
@@ -105,7 +105,7 @@ write_csv(
 
 t_tj_outless <- with(for_t_tests, t.test(task_jumps_mean_st, task_jumps_mean_mt))
 t_tj_outless <- tidy(t_tj_outless)
-#sig
+#ns
 write_csv(
   t_tj_outless,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_tj_outless.csv"
@@ -114,7 +114,7 @@ write_csv(
 
 t_tj_outless_log <- with(for_t_tests_log, t.test(tj_st_log, tj_mt_log))
 t_tj_outless_log <- tidy(t_tj_outless_log)
-#sig
+#sig with 0.6, ns with 0.65
 write_csv(
   t_tj_outless_log,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_tj_outless_log.csv"
@@ -146,6 +146,7 @@ write_csv(
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/all_t_rt.csv"
 )
 
+#log adjusted is what we are interested in -> data becomes a lot more normal
 all_t_rt_log <- with(all_for_t_tests_log, t.test(rt_st_log, rt_mt_log))
 all_t_rt_log <- tidy(all_t_rt_log)
 #sig as well
@@ -162,13 +163,6 @@ write_csv(
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/all_t_tj.csv"
 )
 
-all_t_tj_log <- with(all_for_t_tests_log, t.test(tj_st_log, tj_mt_log))
-all_t_tj_log <- tidy(all_t_tj_log)
-#log adjusted it i ssig - which seems more parsimonious to me
-write_csv(
-  all_t_tj_log,
-  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/all_t_tj_log.csv"
-)
 
 all_summary <- skim_without_charts(all_for_t_tests)
 write_csv(
