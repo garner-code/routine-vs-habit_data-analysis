@@ -6,7 +6,7 @@
 rm(list=ls())
 library(tidyverse)
 library(broom)
-library(gtsummary)
+library(apaTables)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
@@ -115,7 +115,8 @@ mod1 <- lm(reclicks_mean ~ TE + errors_stay, data = single_stay)
 summary(mod1)
 
 trsf_mod1 <- lm(sqrt(reclicks_mean) ~ TE + log(errors_stay + 0.001), data = single_stay)
-summary(trsf_mod1)
+trsf_mod1 <- summary(trsf_mod1)
+
 
 # residuals ---------------------------------------------------------------
 
@@ -143,7 +144,6 @@ write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-an
 #plot relationship (residual x residual) between errors and reclicks
 
 errors_stay_vec <- single_stay$errors_stay
-
 
 reclicks_x_errors <- data.frame(trsf_rReclicks, log(errors_stay_vec + 0.001))
 
