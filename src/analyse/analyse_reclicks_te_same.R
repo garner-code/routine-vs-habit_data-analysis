@@ -108,19 +108,22 @@ write_csv(
 # linear models -----------------------------------------------------------
 
 #make just st
-single <- split_by_block |>
+single_stay <- split_by_block |>
   filter(block == "st")
 
-single_no_outs <- single |>
-  filter(errors_stay < 0.3) |>
-  filter(reclicks_mean < 6.5)
+mod1 <- lm(reclicks_mean ~ TE + errors_stay, data = single_stay)
+summary(mod1)
 
+trsf_mod1 <- lm(sqrt(reclicks_mean) ~ TE + log(errors_stay + 0.001), data = single_stay)
+summary(trsf_mod1)
+
+# residuals ---------------------------------------------------------------
 
 #now run analysis
 #first lets do no transform
 
-rReclicks <- residuals(lm(reclicks_mean ~ errors_stay,  data = single_no_outs))
-rTE <- residuals(lm(TE ~ errors_stay, data = single_no_outs))
+rReclicks <- residuals(lm(reclicks_mean ~ errors_stay,  data = single_stay))
+rTE <- residuals(lm(TE ~ errors_stay, data = single_stay))
 
 errors_partialled <- data.frame(rReclicks, rTE)
 
@@ -129,14 +132,13 @@ write_csv(errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysi
 
 #with sqrt transform of reclicks, and with log transform of errors
 
-trsf_rReclicks <- residuals(lm(sqrt(reclicks_mean) ~ log(errors_stay + 0.001),  data = single_no_outs))
-trsf_rTE <- residuals(lm(TE ~ log(errors_stay + 0.001), data = single_no_outs))
+trsf_rReclicks <- residuals(lm(sqrt(reclicks_mean) ~ log(errors_stay + 0.001),  data = single_stay))
+trsf_rTE <- residuals(lm(TE ~ log(errors_stay + 0.001), data = single_stay))
 
-trsf_m1 <- lm(trsf_rReclicks ~ trsf_rTE)
-summary(trsf_m1)
 
-trsf_errors_partialled <- data.frame(rReclicks, rTE)
+trsf_errors_partialled <- data.frame(trsf_rReclicks, trsf_rTE)
 
 write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_errors_partialled_reclicks_TE.csv")
 
 
+#plot relationship (residual x residual) between errors and reclicks - future me

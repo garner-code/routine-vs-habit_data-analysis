@@ -42,7 +42,7 @@ partial |>
 
 #and second with sqrt transform for reclicks, log + 0.001 for all_errors
 trsf_partial |>
-  ggplot(aes(x = rReclicks, y = rTE)) +
+  ggplot(aes(x = trsf_rTE, y = trsf_rReclicks)) +
   geom_point() +
   geom_smooth(, formula = 'y ~ x', method = 'lm', se = F) +
   plot_style() +
