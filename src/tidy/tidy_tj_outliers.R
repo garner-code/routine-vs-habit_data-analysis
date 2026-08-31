@@ -38,53 +38,16 @@ averages_democohs <- averages_democohs |>
 
 write_csv(averages_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_democohs_no_n_nc_outs.csv")
 
-#averages[43:48, "task_jumps_mean"] <- NA
-#9
-#averages[49:54, "task_jumps_mean"] <- NA
-#11
-#averages[61:66, "task_jumps_mean"] <- NA
-
-#8
-#averages_democohs[43:48, "task_jumps_mean"] <- NA
-#9
-#averages_democohs[49:54, "task_jumps_mean"] <- NA
-#11
-#averages_democohs[61:66, "task_jumps_mean"] <- NA
-
-
-
-# exclusion 2 - tjs ------------------------------------------------------------
-
-#now get rid of the people who had enough trials to calc a tj score,
-#but whose tj score itself was an outlier.
-#anyone who has even one outlier, across all four permutations
-#i.e across mt or st, stay or switch
-tj_exclude <- c(2, 13, 73, 79, 81, 84)
-
-
-averages <- averages |>
-  filter(!sub %in% tj_exclude)
-
-write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_tj_outs.csv")
-
-averages_democohs <- averages_democohs |>
-  filter(!sub %in% tj_exclude)
-
-write_csv(averages_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_democohs_no_tj_outs.csv")
-
-# exclusion 3 - nback -----------------------------------------------------
-#criteria is < 0.6 across both sens and spec
+# exclusion 2 - nback -----------------------------------------------------
+#criteria is < 0.65 across both sens and spec
 #only sens has outliers
-
-sens_exclude <- c(13, 23, 25, 28, 51, 61, 73, 76, 85)
-
-averages <- averages |>
-  filter(!sub %in% sens_exclude)
 
 write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_tj_no_nback_outs.csv")
 
-averages_democohs <- averages_democohs |>
-  filter(!sub %in% sens_exclude)
+exclude_sixfive <- c(13, 22, 25, 28, 51, 61, 63, 73, 76, 77, 84, 85)
 
-write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_democohs_no_tj_no_nback_outs.csv")
+averages <- averages |>
+  filter(!sub %in% exclude_sixfive)
+
+write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_n_nc_no_nback_outs.csv")
 

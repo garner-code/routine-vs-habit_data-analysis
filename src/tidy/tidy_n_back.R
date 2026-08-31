@@ -42,11 +42,14 @@ counts <- read_csv(
 n_back_mt <- n_back |>
   filter(block == "mt")
 
-subs2exclude <- c(13, 23, 25, 28, 51, 61, 73, 76, 85)
+excl <- n_back_mt |>
+  filter(sens < 0.65)
+
+exclude_sixfive <- unique(excl$sub)
 
 
 n_back_mt <- n_back_mt %>%
-  filter(!sub %in% subs2exclude)
+  filter(!sub %in% excl)
 #above is now outlierless.
 
 write_csv(n_back_mt, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_nback_mt.csv")
