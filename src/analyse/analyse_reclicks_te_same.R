@@ -135,10 +135,24 @@ write_csv(errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysi
 trsf_rReclicks <- residuals(lm(sqrt(reclicks_mean) ~ log(errors_stay + 0.001),  data = single_stay))
 trsf_rTE <- residuals(lm(TE ~ log(errors_stay + 0.001), data = single_stay))
 
-
 trsf_errors_partialled <- data.frame(trsf_rReclicks, trsf_rTE)
 
 write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_errors_partialled_reclicks_TE.csv")
 
 
-#plot relationship (residual x residual) between errors and reclicks - future me
+#plot relationship (residual x residual) between errors and reclicks
+
+errors_stay_vec <- single_stay$errors_stay
+
+
+reclicks_x_errors <- data.frame(trsf_rReclicks, log(errors_stay_vec + 0.001))
+
+reclicks_x_errors <- reclicks_x_errors |>
+  rename(
+    log_errors_stay = log.errors_stay_vec...0.001.
+  )
+
+write_csv(reclicks_x_errors, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_reclicks_x_errors.csv")
+
+
+

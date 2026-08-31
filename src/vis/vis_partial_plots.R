@@ -24,6 +24,11 @@ trsf_partial <- read_csv(
   na = c("", "NA")
 )
 
+reclicks_x_errors <-read_csv(
+  "trsf_reclicks_x_errors.csv",
+  na = c("", "NA")
+)
+
 
 #relation of reclicks and te, partialling out all_errors_stay
 
@@ -52,3 +57,19 @@ trsf_partial |>
     subtitle = "stay trials only"
   )
 
+
+# reclicks x errors -------------------------------------------------------
+
+
+reclicks_x_errors |>
+  ggplot(aes(x = log_errors_stay, y = trsf_rReclicks)) +
+  geom_point() +
+  geom_smooth(, formula = 'y ~ x', method = 'lm', se = F) +
+  plot_style() +
+  theme_classic() +
+  labs(
+    title = "errors partialled out, sqrt(reclicks) and log(errors) tranforms",
+    subtitle = "stay trials only",
+    y = "Reclicks | All Errors",
+    x = "All Errors Stay Trials (log transformed)"
+  )
