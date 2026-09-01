@@ -85,3 +85,4 @@ IQR_out_ges <- 0.0202 + 1.5*IQR_ges
 sd_ges <- sd(out_check$general_errors_mean)
 sd_out_twofive <- 0.0202 + 2.5*sd_ges
 sd_out_three <- 0.0202 + 3*sd_ges
+

@@ -20,7 +20,6 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
-
 # tidy --------------------------------------------------------------------
 
 graph_ts <- averages |>
@@ -35,15 +34,8 @@ graph_ts <- averages |>
     ges_mean = mean(general_errors_mean)
   )
 
-|>
-  pivot_longer(
-    cols = rt_mean:ges_mean,
-    names_to = "DV",
-    values_to = "Values"
-  )
-
-
 # plot --------------------------------------------------------------------
+pal <- paletteer_d("RColorBrewer::Paired")
 
 #response time
 #palette
@@ -90,7 +82,6 @@ ggsave(
 )
 
 #task jumps
-pal <- paletteer_d("RColorBrewer::Paired")
 tj_pal <- pal[c(3, 4)]
 
 graph_ts |>
@@ -146,7 +137,6 @@ graph_ts |>
   stat_summary(fun = "mean", geom = "point", color = "black", size = 2) +
   scale_colour_manual(values = ge_pal) +
   scale_fill_manual(values = ge_pal) +
-  #space here for if they sig differ
   theme_classic() +
   plot_style() +
   theme(
