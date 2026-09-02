@@ -14,6 +14,16 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
+trials <- read_csv(
+  "routine_vs_habit_trl.csv",
+  na = c("", "NA")
+)
+
+
+# create dfs  ------------------------------------------------------------------
+
+
+
 averages_rt_dur <- averages |>
   mutate(
     sum_rt_dur = rt_mean + dur_mean
@@ -31,3 +41,20 @@ averages_rt_dur_outless <- averages_rt_dur |>
   filter(!sub %in% exclude_sixty)
 
 write_csv(averages_rt_dur_outless, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_rt_dur_outless.csv")
+
+#also worth double checking this doesn't change if you first add the trl data
+#and then divide
+
+trials |>
+  filter(ses == 4) |>
+  select(sub:switch, rt, dur) |>
+  mutate(
+    rt_dur = rt + dur
+  ) |>
+  filter(!is.na(rt_dur)) |>
+  group_by(sub, block, switch) |>
+  summarise(
+    mean_rt_dur = mean(rt_dur)
+  )
+
+#it does not :)
