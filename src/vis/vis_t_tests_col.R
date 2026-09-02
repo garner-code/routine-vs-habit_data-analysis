@@ -31,7 +31,7 @@ graph_ts <- averages |>
   summarise(
     rt_mean = mean(rt_mean),
     tj_mean = mean(task_jumps_mean),
-    ges_mean = mean(general_errors_mean)
+    ges_mean = mean(general_errors_mean),
   )
 
 # plot --------------------------------------------------------------------
@@ -39,18 +39,26 @@ pal_fill <- c("#A6CEE390", "#1F78B490", "#B2DF8A90", "#33A02C90", "#FDBF6F90", "
 pal_colour <- paletteer_d("RColorBrewer::Paired")
 
 rt_pal_fill <- pal_fill[c(1, 2)]
-rt_pal_colour <-pal_colour[c(1,2)]
+rt_pal_colour <- pal_colour[c(1, 2)]
+
+tj_pal_fill <- pal_fill[c(3, 4)]
+tj_pal_colour <- pal_colour[c(3, 4)]
+
+ge_pal_fill <- pal_fill[c(5, 6)]
+ge_pal_colour <- pal_colour[c(7, 8)]
 
 #response time
 #palette
 
 graph_ts |>
   ggplot(aes(x = block, y = rt_mean)) +
-  stat_summary(fun = "mean", geom = "col", fill = "#899DA4FF", colour = "#899DA4FF") +
+  stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
   geom_point(
-    aes(size = 2.5, stroke = 1.1, colour = block, fill = block, group = sub),
-    position = position_dodge(width = 0.5), shape = 21
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    position = position_dodge(width = 0.5), shape = 21, size = 3.5
   ) +
+  stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
+  stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   geom_signif(
     data = graph_ts, comparisons = list(c("Singletasking","Multitasking")),
     annotation = "*", margin_top = 0.1, size = 1.2, textsize = 10, vjust = 0.5
@@ -79,44 +87,82 @@ ggsave(
   height = 6,
 )
 
+ ###################
 
- ####################
+#as in our analysis, exclude n-back sens and n_nc outliers
+outs <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
 
-  geom_violin(aes(colour = block, fill = block), alpha = 0.3) +
+graph_ts |>
+  filter(!sub %in% outs) |>
+  ggplot(aes(x = block, y = tj_mean)) +
+  stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
   geom_point(
-    aes(colour = block, fill = block, shape = block, group = sub)
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    position = position_dodge(width = 0.5), shape = 21, size = 3.5
   ) +
-  geom_line(
-    aes(group = sub),
-    alpha = 0.5,
-    colour = "grey"
-  ) +
-  geom_signif(
-    data = graph_ts,
-    comparisons = list(c("Singletasking","Multitasking")),
-    annotation = "*"
-    ) +
-  stat_summary(fun = "mean", geom = "point", color = "black", size = 2) +
-  scale_color_paletteer_d("RColorBrewer::Paired") +
-  scale_fill_paletteer_d("RColorBrewer::Paired") +
+  stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
+  stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
+  scale_fill_manual(values = tj_pal_fill) +
+  scale_colour_manual(values = tj_pal_colour) +
   plot_style() +
   theme(
     axis.title = element_text(face = "bold"),
-    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.title.x = element_blank(),
     axis.title.y = element_text(margin = margin (r = 15)),
     axis.line = element_line(colour = "grey"),
     axis.ticks = element_line(colour = "grey"),
-    legend.position = "none"
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    legend.position = "none",
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
-  ylim(c(0, 1)) +
   labs(
-    colour = "Block",
-    fill = "Block"
+    y = "Mean Task Jumps"
   )
 
 ggsave(
-  "rt_dif_ttest.png",
+  "tj_dif_ttest.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
-  width = 6,
+  width = 3,
+  height = 6,
+)
+
+ ####################
+
+#finally gen errors
+#also ns
+#and same outliers excluded
+
+
+graph_ts |>
+  filter(!sub %in% outs) |>
+  ggplot(aes(x = block, y = ges_mean)) +
+  stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
+  geom_point(
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    position = position_dodge(width = 0.5), shape = 21, size = 3.5
+  ) +
+  stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
+  stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
+  scale_fill_manual(values = ge_pal_fill) +
+  scale_colour_manual(values = ge_pal_colour) +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    legend.position = "none",
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
+  ) +
+  labs(
+    y = "Mean Non-Context Errors"
+  )
+
+ggsave(
+  "ge_dif_ttest.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
   height = 6,
 )
