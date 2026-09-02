@@ -33,36 +33,42 @@ graph_ts <- averages |>
   mutate(
     rt_mean = mean(rt_mean),
     tj_mean = mean(task_jumps_mean),
-    ges_mean = mean(general_errors_mean),
-    x_pos = if_else(block == "Singletasking", 1, 2)
+    ges_mean = mean(general_errors_mean)
   )
 
-# plot --------------------------------------------------------------------
 pal_fill <- c("#A6CEE390", "#1F78B490", "#B2DF8A90", "#33A02C90", "#FDBF6F90", "#FF7F0090")
 pal_colour <- paletteer_d("RColorBrewer::Paired")
 
 rt_pal_fill <- pal_fill[c(1, 2)]
-rt_pal_colour <- pal_colour[c(1,2)]
+rt_pal_colour <- pal_colour[c(1, 2)]
+
+tj_pal_fill <- pal_fill[c(3, 4)]
+tj_pal_colour <- pal_colour[c(3, 4)]
+
+ge_pal_fill <- pal_fill[c(5, 6)]
+ge_pal_colour <- pal_colour[c(7, 8)]
+
+# plot --------------------------------------------------------------------
 
 graph_ts |>
   ggplot(aes(x = switch, y = rt_mean)) +
   stat_slab(
-    aes(colour = block, fill = block), width = 0.3,
+    aes(fill = block), width = 0.3, colour = "black",
     data = ~ filter(.x, block == "Singletasking"),
     side = "left", alpha = 0.5, position = position_nudge(x = -0.5)
     ) +
   stat_slab(
-    aes(colour = block, fill = block), width = 0.3,
+    aes(fill = block), width = 0.3, colour = "black",
     data = ~ filter(.x, block == "Multitasking"),
     side = "right", alpha = 0.5, position = position_nudge(x = 0.5),
   ) +
   geom_boxplot(
-    aes(colour = block, fill = block), alpha = 0.5, width = 0.05,
+    aes(fill = block), alpha = 0.5, width = 0.05, colour = "black",
     data = ~ filter(.x, block == "Singletasking"),
     position = position_nudge(x = -0.45), outlier.color = NA
   ) +
   geom_boxplot(
-    aes(colour = block, fill = block), alpha = 0.5, width = 0.05,
+    aes(fill = block), alpha = 0.5, width = 0.05, colour = "black",
     data = ~ filter(.x, block == "Multitasking"),
     position = position_nudge(x = 0.45), outlier.color = NA
   ) +
@@ -85,7 +91,7 @@ graph_ts |>
     axis.text.x = element_blank(),
     axis.title.y = element_text(margin = margin (r = 15)),
     axis.line = element_line(colour = "grey"),
-    axis.ticks = element_blank(),
+    axis.ticks.x = element_blank(),
     legend.position = "none",
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
@@ -102,84 +108,124 @@ ggsave(
 
 
 #task jumps
-tj_pal <- pal[c(3, 4)]
+
+#remove outliers first
+outs <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
 
 graph_ts |>
-  ggplot(aes(x = block, y = tj_mean)) +
-  geom_violin(aes(colour = block, fill = block), alpha = 0.3) +
+  filter(!sub %in% outs) |>
+  ggplot(aes(x = switch, y = tj_mean)) +
+  stat_slab(
+    aes(fill = block), width = 0.3, colour = "black",
+    data = ~ filter(.x, block == "Singletasking"),
+    side = "left", alpha = 0.5, position = position_nudge(x = -0.5)
+  ) +
+  stat_slab(
+    aes(fill = block), width = 0.3, colour = "black",
+    data = ~ filter(.x, block == "Multitasking"),
+    side = "right", alpha = 0.5, position = position_nudge(x = 0.5),
+  ) +
+  geom_boxplot(
+    aes(fill = block), alpha = 0.5, width = 0.05, colour = "black",
+    data = ~ filter(.x, block == "Singletasking"),
+    position = position_nudge(x = -0.45), outlier.color = NA
+  ) +
+  geom_boxplot(
+    aes(fill = block), alpha = 0.5, width = 0.05, colour = "black",
+    data = ~ filter(.x, block == "Multitasking"),
+    position = position_nudge(x = 0.45), outlier.color = NA
+  ) +
   geom_point(
-    aes(colour = block, fill = block, shape = block, group = sub)
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    data = ~ filter(.x, block == "Singletasking"),
+    position = position_dodgenudge(width = 0.2, x = -0.25), shape = 21, size = 3.5
   ) +
-  geom_line(
-    aes(group = sub),
-    alpha = 0.5,
-    colour = "grey"
+  geom_point(
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    data = ~ filter(.x, block == "Multitasking"),
+    position = position_dodgenudge(width = 0.2, x = 0.25), shape = 21, size = 3.5
   ) +
-  stat_summary(fun = "mean", geom = "point", color = "black", size = 2) +
-  scale_colour_manual(values = tj_pal) +
-  scale_fill_manual(values = tj_pal) +
-  theme_classic() +
+  scale_fill_manual(values = tj_pal_fill) +
+  scale_colour_manual(values = tj_pal_colour) +
   plot_style() +
   theme(
-    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+    axis.title = element_text(face = "bold"),
     axis.title.x = element_blank(),
-    legend.position = "none"
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks.x = element_blank(),
+    legend.position = "none",
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
-  ylim(c(0, 1)) +
   labs(
-    title = "Task Jumps do not significantly differ",
-    y = "Mean Task Jumps",
-    colour = "Block",
-    fill = "Block"
+    y = "Mean Task Jumps"
   )
 
 ggsave(
-  "tj_dif_ttest.png",
+  "tj_dif_ttest_raincloud.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
-  width = 6,
+  width = 4,
   height = 6,
 )
 
-#gen errors
-ge_pal <- pal[c(9, 10)]
+# gen errors
+#remove outliers as well
 
 graph_ts |>
-  ggplot(aes(x = block, y = ges_mean)) +
-  geom_violin(aes(colour = block, fill = block), alpha = 0.3) +
+  filter(!sub %in% outs) |>
+  ggplot(aes(x = switch, y = ges_mean)) +
+  stat_slab(
+    aes(fill = block), width = 0.3, colour = "black",
+    data = ~ filter(.x, block == "Singletasking"),
+    side = "left", alpha = 0.5, position = position_nudge(x = -0.5)
+  ) +
+  stat_slab(
+    aes(fill = block), width = 0.3, colour = "black",
+    data = ~ filter(.x, block == "Multitasking"),
+    side = "right", alpha = 0.5, position = position_nudge(x = 0.5),
+  ) +
+  geom_boxplot(
+    aes(fill = block), alpha = 0.5, width = 0.05, colour = "black",
+    data = ~ filter(.x, block == "Singletasking"),
+    position = position_nudge(x = -0.45), outlier.color = NA
+  ) +
+  geom_boxplot(
+    aes(fill = block), alpha = 0.5, width = 0.05, colour = "black",
+    data = ~ filter(.x, block == "Multitasking"),
+    position = position_nudge(x = 0.45), outlier.color = NA
+  ) +
   geom_point(
-    aes(colour = block, fill = block, shape = block, group = sub)
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    data = ~ filter(.x, block == "Singletasking"),
+    position = position_dodgenudge(width = 0.2, x = -0.25), shape = 21, size = 3.5
   ) +
-  geom_line(
-    aes(group = sub),
-    alpha = 0.5,
-    colour = "grey"
+  geom_point(
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    data = ~ filter(.x, block == "Multitasking"),
+    position = position_dodgenudge(width = 0.2, x = 0.25), shape = 21, size = 3.5
   ) +
-  stat_summary(fun = "mean", geom = "point", color = "black", size = 2) +
-  scale_colour_manual(values = ge_pal) +
-  scale_fill_manual(values = ge_pal) +
-  theme_classic() +
+  scale_fill_manual(values = ge_pal_fill) +
+  scale_colour_manual(values = ge_pal_colour) +
   plot_style() +
   theme(
-    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5),
+    axis.title = element_text(face = "bold"),
     axis.title.x = element_blank(),
-    legend.position = "none"
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks.x = element_blank(),
+    legend.position = "none",
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
-  ylim(c(0, 0.5)) +
   labs(
-    title = "Task Jumps do not significantly differ",
-    y = "Mean General Errors",
-    colour = "Block",
-    fill = "Block"
+    y = "Mean Non-Context Errors"
   )
 
+ggsave(
+  "ges_dif_ttest_raincloud.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 4,
+  height = 6,
+)
 
-stat_pointinterval(
-  aes(colour = block, fill = block), alpha = 0.5, width = 0.05,
-  data = ~ filter(.x, block == "Singletasking"),
-  position = position_nudge(x = -0.45)
-) +
-  stat_pointinterval(
-    aes(colour = block, fill = block), alpha = 0.5, width = 0.05,
-    data = ~ filter(.x, block == "Multitasking"),
-    position = position_nudge(x = 0.45)
-  ) +
