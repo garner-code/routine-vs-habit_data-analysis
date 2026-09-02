@@ -33,30 +33,22 @@ reclicks_x_errors <-read_csv(
 
 #relation of reclicks and te, partialling out all_errors_stay
 
-#first with no transforms
-
-partial |>
-  ggplot(aes(x = rReclicks, y = rTE)) +
-  geom_point() +
-  geom_smooth(, formula = 'y ~ x', method = 'lm', se = F) +
-  plot_style() +
-  theme_classic() +
-  labs(
-    title = "errors partialled out, no tranform",
-    subtitle = "stay trials only"
-  )
-
-#and second with sqrt transform for reclicks, log + 0.001 for all_errors
+#with sqrt transform for reclicks, log + 0.001 for all_errors
 trsf_partial |>
   ggplot(aes(x = trsf_rTE, y = trsf_rReclicks)) +
-  geom_point(shape = 21, size = 3, fill = "#899DA4FF", colour = "black") +
-  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#C93312FF") +
+  geom_point(shape = 21, size = 3.5, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = T, colour = "#C93312FF", fill = "#C93312FF", fullrange = TRUE) +
+  scale_x_continuous(limits = c(-0.5, 0.5)) +
   plot_style() +
-  theme(plot.caption = element_markdown()) +
-  theme_classic() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt")
+  ) +
   labs(
-    title = "Transition Entropy predicts Reclicks, holding All Errors constant",
-    subtitle = bquote('p < 0.001,' ~ R^2 ~ '= 0.203'),
     x = "Transition Entropy | All Errors",
     y = "Reclicks | All Errors"
   )
@@ -64,8 +56,8 @@ trsf_partial |>
 ggsave(
   "trsf_partial.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
-  height = 6,
-  width = 6
+  height = 5,
+  width = 5
 )
 
 # reclicks x errors -------------------------------------------------------
@@ -73,20 +65,24 @@ ggsave(
 
 reclicks_x_errors |>
   ggplot(aes(x = log_errors_stay, y = trsf_rReclicks)) +
-  geom_point(shape = 21, size = 3, fill = "#899DA4FF", colour = "black") +
+  geom_point(shape = 21, size = 3.5, stroke = 1.1, fill = "#899DA495", colour = "black") +
   geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#C93312FF") +
   plot_style() +
-  theme_classic() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+  ) +
   labs(
-    title = "All Errors do not predict Reclicks",
-    subtitle = "p > 0.05",
     y = "Reclicks | All Errors",
-    x = "All Errors Stay Trials (log transformed)"
+    x = "Errors (No Context Switch)"
   )
 
 ggsave(
   "reclicks_x_errors_partial.png",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
-  height = 6,
-  width = 6
+  height = 5,
+  width = 5
 )
