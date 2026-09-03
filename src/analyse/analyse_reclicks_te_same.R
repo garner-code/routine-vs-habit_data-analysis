@@ -78,3 +78,8 @@ write_csv(reclicks_x_errors, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysi
 
 
 
+
+#cor residuals reclicks, te
+
+s
+
