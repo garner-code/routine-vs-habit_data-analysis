@@ -79,3 +79,8 @@ write_csv(trsf_TE_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analys
 
 pear_cor_TE_part <- with(trsf_TE_partialled, cor(trsf_r_re_by_te, trsf_r_err_by_te, method = "pearson"))
 
+
+#cor residuals reclicks, te
+
+s
+
