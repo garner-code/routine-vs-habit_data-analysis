@@ -16,6 +16,7 @@ source(paste(here(), "src", "get_task_jumps.R", sep="/"))
 source(paste(here(), "src", "get_reclicks.R", sep="/"))
 source(paste(here(), "src", "get_rts.R", sep="/"))
 source(paste(here(), "src", "get_TE.R", sep="/"))
+source(paste(here(), "src", "get_frst_vs_scnd_resp_idxs.R", sep="/"))
 ### settings
 
 # !you will want to update these settings a lot during piloting, when the task code or the way you
@@ -80,6 +81,7 @@ grp_data <- get_rts(grp_data) # calculate RTs and add to the data frame
 grp_data <- get_task_jumps(grp_data, "res") # now calculate task_jumps per trial
 grp_data <- get_reclicks(grp_data) # and now we calculate reclicks
 
+
 # now calculate TE for grouping with summary level data below
 # Goal: sum transitions over periods where there has not been a switch trial - i.e.
 # between blocks of stay trials.
@@ -108,6 +110,9 @@ TE_summary <- TE_summary %>% mutate(block = str_extract(block, "(?<=b-)[a-z]+"))
     TE = mean(TE, na.rm=TRUE)
   )
 
+grp_data <- index_first_vs_scnd_rsps(grp_data) # and now we index first vs second response on sw trials for comparing st vs mt
+
+
 # save the formatted data
 fnl <- file.path(project_path, "res", paste(paste(sv_name, "evt", sep = "_"), ".csv", sep = ""))
 write_csv(grp_data, fnl)
@@ -132,7 +137,7 @@ res <- grp_data %>%
   ) %>% ungroup()
 
 # now lets get the RT data we want
-max_cutoff <- 2.0 # anything more than 2 is weird
+max_cutoff <- 2.0 # anything more than 2.0 is weird when we are looking
 sd_cut <- 2.5 # anything more than 2.5 SDs above the mean is also weird
 rt_res <- grp_data %>%
   filter(start_rt < max_cutoff,
@@ -211,3 +216,68 @@ outlier_proportions <- rt_res %>%
   )
 o_fn <- file.path(project_path, "res", paste(paste(sv_name, "outliers", sep = "_"), ".csv", sep = ""))
 write_csv(outlier_proportions, o_fn)
+
+
+# switching between tasks RTs on ST vs MT ---------------------------------
+
+# now I want to get only the first and second RTs from ST and MT switch trials, and average across those
+task_load_rts <- grp_data %>% filter(ses == 4 & switch == 1 & start_rt < max_cutoff) %>%
+ filter(frst_tsk_resp | scnd_tsk_resp) %>%
+  select(sub, ses, t, block, context, door, start_rt, frst_tsk_resp, scnd_tsk_resp) %>%
+  pivot_longer(
+    cols = c(frst_tsk_resp, scnd_tsk_resp),
+    names_to = "resp_type",
+    values_to = "resp_num"
+  ) %>%
+  filter(resp_num == 1)  %>%
+  pivot_wider(
+    names_from = resp_type,
+    values_from = start_rt
+  ) %>%
+  mutate(
+    scnd_tsk_resp = lead(scnd_tsk_resp)
+  ) %>%
+  drop_na() %>% # U2H
+  arrange(sub, ses, t, block, context) %>%
+  group_by(sub, ses, block, context) %>%
+    mutate(mean_frst_rt = mean(frst_tsk_resp, na.rm = TRUE),
+         sd_frst_rt = sd(frst_tsk_resp, na.rm = TRUE),
+         frst_rt_cut_off = mean_frst_rt + sd_cut * sd_frst_rt,
+         mean_scnd_rt = mean(scnd_tsk_resp, na.rm = TRUE),
+         sd_scnd_rt = sd(scnd_tsk_resp, na.rm = TRUE),
+         scnd_rt_cut_off = mean_scnd_rt + sd_cut * sd_scnd_rt,
+         frst_tsk_resp = ifelse(frst_tsk_resp > frst_rt_cut_off, NA, frst_tsk_resp),
+         scnd_tsk_resp = ifelse(scnd_tsk_resp > scnd_rt_cut_off, NA, scnd_tsk_resp)
+  ) %>%
+  ungroup() %>%
+  summarise(.by = c(sub, ses, t, block, context),
+            n_frst_rt_outliers = sum(is.na(frst_tsk_resp)),
+            frst_rt = mean(frst_tsk_resp, na.rm = TRUE),
+            n_scnd_rt_outliers = sum(is.na(scnd_tsk_resp)),
+            scnd_rt = mean(scnd_tsk_resp, na.rm = TRUE),
+            N = n())
+
+fnl <- file.path(project_path, "res", paste(paste(sv_name, "sw_frst-scnd_stvmt_trl", sep = "_"), ".csv", sep = ""))
+write_csv(task_load_rts, fnl)
+
+# now calculate the proportion of outliers removed for each
+# now get the proportions of outliers removed for each participant
+outlier_proportions_sw_rts <- task_load_rts %>%
+  group_by(sub) %>%
+  summarise(
+    prop_frst_rt_outliers = sum(n_frst_rt_outliers) / sum(N),
+    prop_scnd_rt_outliers = sum(n_scnd_rt_outliers) / sum(N)
+  )
+o_fn <- file.path(project_path, "res", paste(paste(sv_name, "outliers_frstvscnd", sep = "_"), ".csv", sep = ""))
+write_csv(outlier_proportions_sw_rts, o_fn)
+
+# now get the summary data for participants. We'll have first vs scnd as dvs, and sub, and block as the grouping variables
+
+task_rsp_rt_sum <-  task_load_rts %>%
+  summarise(.by = c(sub, block, context),
+            frst_rt = mean(frst_rt, na.rm = TRUE),
+            scnd_rt = mean(scnd_rt, na.rm = TRUE)) %>%
+   summarise(.by = c(sub, block),
+             frst_rt = mean(frst_rt, na.rm = TRUE),
+             scnd_rt = mean(scnd_rt, na.rm = TRUE)) %>%
+  pivot_longer(cols = c(frst_rt, scnd_rt), names_to = "resp_type", values_to = "mean_rt")
