@@ -115,7 +115,7 @@ write_csv(
 
 #ge we will run t tests as well as wilcoxin (no transforms help data
 # become normally distributed)
-t_ge_outless <- with(for_t_tests, t.test(task_jumps_mean_st, task_jumps_mean_mt))
+t_ge_outless <- with(for_t_tests, t.test(general_errors_mean_st, general_errors_mean_mt))
 t_ge_outless <- tidy(t_ge_outless)
 #ns (as expected)
 
