@@ -137,28 +137,29 @@ res <- grp_data %>%
   ) %>% ungroup()
 
 # now lets get the RT data we want
+# things I have learned:
+# there is a curvlinear relationship between start_rt and press_duration,
+# so I think we need to add them together
+# the ecdf of this combined RT data shows that 99% of the data is below 2.0 seconds
+# have also found the minimum value is 0, which is not possible, so we will remove any RTs below 0.1 seconds (100ms)
 max_cutoff <- 2.0 # anything more than 2.0 is weird when we are looking
+min_cutoff <- 0.1 # anything less than 0.1 is weird when we are looking
 sd_cut <- 2.5 # anything more than 2.5 SDs above the mean is also weird
 rt_res <- grp_data %>%
-  filter(start_rt < max_cutoff,
-         press_duration < max_cutoff) %>%
+  mutate(rt = start_rt + press_duration) %>%
+  filter(rt < max_cutoff,
+         rt > min_cutoff) %>%
   arrange(sub, ses, subses, t, block, context, train_type) %>%
   group_by(sub, ses, subses, block, context, train_type) %>%
-  mutate(mean_rt = mean(start_rt, na.rm = TRUE),
-         sd_rt = sd(start_rt, na.rm = TRUE),
+  mutate(mean_rt = mean(rt, na.rm = TRUE),
+         sd_rt = sd(rt, na.rm = TRUE),
          rt_cut_off = mean_rt + sd_cut * sd_rt,
-         rt = ifelse(start_rt > rt_cut_off, NA, start_rt),
-         mean_press = mean(press_duration, na.rm = TRUE),
-         sd_press = sd(press_duration, na.rm = TRUE),
-         press_cut_off = mean_press + sd_cut * sd_press,
-         dur = ifelse(press_duration > press_cut_off, NA, press_duration)
+         rt = ifelse(rt > rt_cut_off, NA, rt)
   ) %>%
   ungroup() %>%
   summarise(.by = c(sub, ses, subses, t, block, context, train_type),
             n_rt_outliers = sum(is.na(rt)),
             rt = mean(rt, na.rm = TRUE),
-            n_dur_outliers = sum(is.na(dur)),
-            dur = mean(dur, na.rm = TRUE),
             N = n())
 
 # and put the data back together
@@ -173,7 +174,7 @@ write_csv(res, fnl)
 # get summary statistics for remaining key DVs
 summary_stats <- res %>%
   group_by(sub, ses, context, block, switch, train_type) %>%
-  select(accuracy, setting_errors, general_errors, all_errors, task_jumps, reclicks, rt, dur) %>%
+  select(accuracy, setting_errors, general_errors, all_errors, task_jumps, reclicks, rt) %>%
   summarise(
     across(
       .cols = where(is.numeric),
@@ -211,8 +212,7 @@ write_csv(summary_stats, fnms)
 outlier_proportions <- rt_res %>%
   group_by(sub) %>%
   summarise(
-    prop_rt_outliers = sum(n_rt_outliers) / sum(N),
-    prop_dur_outliers = sum(n_dur_outliers) / sum(N)
+    prop_rt_outliers = sum(n_rt_outliers) / sum(N)
   )
 o_fn <- file.path(project_path, "res", paste(paste(sv_name, "outliers", sep = "_"), ".csv", sep = ""))
 write_csv(outlier_proportions, o_fn)
@@ -221,9 +221,9 @@ write_csv(outlier_proportions, o_fn)
 # switching between tasks RTs on ST vs MT ---------------------------------
 
 # now I want to get only the first and second RTs from ST and MT switch trials, and average across those
-task_load_rts <- grp_data %>% filter(ses == 4 & switch == 1 & start_rt < max_cutoff) %>%
+task_load_rts <- grp_data %>% filter(ses == 4 & switch == 1 & rt < max_cutoff & rt > min_cutoff) %>%
  filter(frst_tsk_resp | scnd_tsk_resp) %>%
-  select(sub, ses, t, block, context, door, start_rt, frst_tsk_resp, scnd_tsk_resp) %>%
+  select(sub, ses, t, block, context, door, rt, frst_tsk_resp, scnd_tsk_resp) %>%
   pivot_longer(
     cols = c(frst_tsk_resp, scnd_tsk_resp),
     names_to = "resp_type",
@@ -232,12 +232,12 @@ task_load_rts <- grp_data %>% filter(ses == 4 & switch == 1 & start_rt < max_cut
   filter(resp_num == 1)  %>%
   pivot_wider(
     names_from = resp_type,
-    values_from = start_rt
+    values_from = rt
   ) %>%
   mutate(
     scnd_tsk_resp = lead(scnd_tsk_resp)
   ) %>%
-  drop_na() %>% # U2H
+  drop_na() %>%
   arrange(sub, ses, t, block, context) %>%
   group_by(sub, ses, block, context) %>%
     mutate(mean_frst_rt = mean(frst_tsk_resp, na.rm = TRUE),
@@ -281,3 +281,6 @@ task_rsp_rt_sum <-  task_load_rts %>%
              frst_rt = mean(frst_rt, na.rm = TRUE),
              scnd_rt = mean(scnd_rt, na.rm = TRUE)) %>%
   pivot_longer(cols = c(frst_rt, scnd_rt), names_to = "resp_type", values_to = "mean_rt")
+# now save the summary data of response times for first vs second responses on switch trials
+fnl <- file.path(project_path, "res", paste(paste(sv_name, "sw_frst-scnd_stvmt_avg", sep = "_"), ".csv", sep = ""))
+write_csv(task_rsp_rt_sum, fnl)
