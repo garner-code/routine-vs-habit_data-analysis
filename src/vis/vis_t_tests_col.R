@@ -26,7 +26,7 @@ graph_ts <- averages |>
   filter(ses == 4, switch == 0) |>
   group_by(sub, block) |>
   mutate(
-    block = factor(block, c("st", "mt"), c("Singletasking", "Multitasking"))
+    block = factor(block, c("st", "mt"), c("ST", "MT"))
   ) |>
   summarise(
     rt_mean = mean(rt_mean),
@@ -60,9 +60,10 @@ graph_ts |>
   stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   geom_signif(
-    data = graph_ts, comparisons = list(c("Singletasking","Multitasking")),
+    data = graph_ts, comparisons = list(c("ST","MT")),
     annotation = "*", margin_top = 0.1, size = 1.2, textsize = 10, vjust = 0.5
   ) +
+  geom_line(aes(group = sub), alpha = 0.3, colour = "grey") +
   scale_fill_manual(values = rt_pal_fill) +
   scale_colour_manual(values = rt_pal_colour) +
   plot_style() +
@@ -72,7 +73,6 @@ graph_ts |>
     axis.title.y = element_text(margin = margin (r = 15)),
     axis.line = element_line(colour = "grey"),
     axis.ticks = element_line(colour = "grey"),
-    axis.text.x = element_text(angle = 60, hjust = 1),
     legend.position = "none",
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
@@ -104,6 +104,7 @@ graph_ts |>
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   scale_fill_manual(values = tj_pal_fill) +
   scale_colour_manual(values = tj_pal_colour) +
+  ylim(c(0, 3)) +
   plot_style() +
   theme(
     axis.title = element_text(face = "bold"),
@@ -111,7 +112,6 @@ graph_ts |>
     axis.title.y = element_text(margin = margin (r = 15)),
     axis.line = element_line(colour = "grey"),
     axis.ticks = element_line(colour = "grey"),
-    axis.text.x = element_text(angle = 60, hjust = 1),
     legend.position = "none",
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
@@ -145,6 +145,7 @@ graph_ts |>
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   scale_fill_manual(values = ge_pal_fill) +
   scale_colour_manual(values = ge_pal_colour) +
+  ylim(c(0, 0.3)) +
   plot_style() +
   theme(
     axis.title = element_text(face = "bold"),
@@ -152,7 +153,6 @@ graph_ts |>
     axis.title.y = element_text(margin = margin (r = 15)),
     axis.line = element_line(colour = "grey"),
     axis.ticks = element_line(colour = "grey"),
-    axis.text.x = element_text(angle = 60, hjust = 1),
     legend.position = "none",
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
