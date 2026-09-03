@@ -5,12 +5,13 @@
 
 rm(list=ls())
 library(tidyverse)
+library(broom)
 
 setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 averages <- read_csv(
-  "averages_democohs.csv",
+  "routine_vs_habit_avg.csv",
   na = c("", "NA")
 )
 
@@ -19,101 +20,45 @@ perform_dat <- read_csv(
   na = c("", "NA")
 )
 
-perform_cohs <- read_csv(
-  "perform_cohs.csv",
-  na = c("", "NA")
-)
-
-
-# Reclicks only -----------------------------------------------------------
-
-#rt
-rt_reclicks_mod <- lm(RT_cost ~ reclicks_mean, data = perform_dat)
-summary(rt_reclicks_mod)
-#ns
-
-rt_reclicks_mod_sqrt <- lm(RT_cost ~ sqrt(reclicks_mean + 0.0001), data = perform_dat)
-summary(rt_reclicks_mod_sqrt)
-#ns
-
-#acc
-
-acc_reclicks_mod <- lm(acc_cost ~ reclicks_mean, data = perform_dat)
-summary(acc_reclicks_mod)
-#ns
-
-
-# TE only -----------------------------------------------------------------
-
-rt_TE_mod <- lm(RT_cost ~ TE, data = perform_dat)
-summary(rt_TE_mod)
-#ns
-
-rt_TE_mod_sqrt <- lm(RT_cost ~ sqrt(TE + 0.0001), data = perform_dat)
-summary(rt_TE_mod_sqrt)
-#ns
-
-#acc
-
-acc_TE_mod <- lm(acc_cost ~ TE, data = perform_dat)
-summary(acc_TE_mod)
-#sig
-
-#TE reliably predicts accuracy
-
 # TE and Reclicks ---------------------------------------------------------
 
-
-#rt (ns)
-rt_both_mod <- lm(RT_cost ~ TE + reclicks_mean, data = perform_dat)
-summary(rt_both_mod)
-
-
-rt_both_mod_sqrt <- lm(RT_cost ~ TE + sqrt(reclicks_mean + 0.0001), data = perform_dat)
-summary(rt_both_mod_sqrt)
-
-#acc
-
-acc_both_mod <- lm(acc_cost ~ TE + reclicks_mean, data = perform_dat)
-summary(acc_both_mod)
-#sig
-
-#so TE and reclicks reliably predicts accuracy, but not rt.
-
-################################################################################
-###########                 NOW COHS                              ##############
-################################################################################
-
-# auto only ---------------------------------------------------------------
-
-rt_auto_mod <- lm(RT_cost ~ auto, data = perform_cohs)
-summary(rt_auto_mod)
+#rt
+rtcost_mod <- lm(RT_cost ~ TE + reclicks_mean, data = perform_dat)
+summary(rtcost_mod)
 #ns
 
-acc_auto_mod <- lm(acc_cost ~ auto, data = perform_cohs)
-summary(acc_auto_mod)
+rtcost_trsf_mod <- lm(RT_cost ~ TE + sqrt(reclicks_mean), data = perform_dat)
+summary(rtcost_trsf_mod)
+#ns
+
+#task jumps (our accuracy proxy)
+tjcost_mod <- lm(tj_cost ~ TE + reclicks_mean, data = perform_dat)
+summary(tjcost_mod)
+#ns
+
+tjcost_trsf_mod <- lm(tj_cost ~ TE + sqrt(reclicks_mean), data = perform_dat)
+summary(tjcost_trsf_mod)
 #ns
 
 
-# rout only ---------------------------------------------------------------
+# TE, reclicks and all_errors_stay ----------------------------------------
 
-rt_rout_mod <- lm(RT_cost ~ rout, data = perform_cohs)
-summary(rt_rout_mod)
+rtcost_mod_err <- lm(RT_cost ~ TE + reclicks_mean + errors_stay, data = perform_dat)
+summary(rtcost_mod_err)
 #ns
 
-acc_rout_mod <- lm(acc_cost ~ rout, data = perform_cohs)
-summary(acc_rout_mod)
+rtcost_trsf_mod_err <- lm(RT_cost ~ TE + sqrt(reclicks_mean) + log(errors_stay + 0.001), data = perform_dat)
+summary(rtcost_mod_err)
 #ns
 
 
-# auto and rout -----------------------------------------------------------
+tjcost_mod_err <- lm(tj_cost ~ TE + reclicks_mean + errors_stay, data = perform_dat)
+summary(tjcost_mod_err)
+#sig for errors (but with no transforms which is bad practice bc trsfs make more normal)
 
-rt_auto_rout_mod <- lm(RT_cost ~ auto + rout, data = perform_cohs)
-summary(rt_auto_rout_mod)
+tjcost_trsf_mod_err <- lm(tj_cost ~ TE + sqrt(reclicks_mean) + log(errors_stay + 0.001), data = perform_dat)
+summary(tjcost_trsf_mod_err)
 #ns
 
-acc_auto_rout_mod <- lm(acc_cost ~ auto + rout, data = perform_cohs)
-summary(acc_auto_rout_mod)
-#ns
 
 
