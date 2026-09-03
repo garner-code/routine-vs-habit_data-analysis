@@ -1,5 +1,5 @@
 ################################################################################
-#####         script for pretty plots from t tests comparing            ########
+#####         script to make pretty plots from t tests comparing        ########
 #####                 rt, task jumps and gen errors                     ########
 #####                      Sadie Lane, 2026                             ########
 ################################################################################
