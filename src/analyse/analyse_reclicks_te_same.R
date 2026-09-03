@@ -16,106 +16,27 @@ split_by_block <- read_csv(
   na = c("", "NA")
 )
 
-#prior to any exclusions
-
-# tidy our data -----------------------------------------------------------
-
-split <- split_by_block |>
-  select(sub:TE) |>
-  group_by(sub) |>
-  mutate(
-    reclicks_sd = sd(reclicks_mean),
-    TE_sd = sd(TE)
-  )
-
-mt_only <- split |>
-  filter(block == "mt", sub != 30)
-
-st_only <- split |>
-  filter(block == "st")
-
-split_sqrt <- split_by_block |>
-  mutate(
-    reclicks_mean_sqrt = sqrt(reclicks_mean + 0.0001),
-    TE_sqrt = sqrt(TE + 0.0001)
-  ) |>
-  select(sub, block, reclicks_mean_sqrt, TE_sqrt)
-
-mt_sqrt <- split_sqrt |>
-  filter(block == "mt", sub != 30)
-
-st_sqrt <- split_sqrt |>
-  filter(block == "st")
-
-#note for future self - for whatever reason sd cannot
-#calculate individually for an st and mt group
-#but proceeding as if sub 30 should be excluded (it should)
-
-# test outliers -----------------------------------------------------------
-
-#reclicks
-
-split |>
-  filter(reclicks_sd > 3) |>
-  select(sub, block, reclicks_mean, reclicks_sd) |>
-  tbl_summary(
-  )
-
-#TE
-split |>
-  filter(TE_sd > 3)
-
-# Analyse -----------------------------------------------------------------
-
-#correlations
-
-#no transform
-pearson <- cor.test(st_only$reclicks_mean, st_only$TE, method = "pearson") |>
-  tidy()
-
-write_csv(
-  pearson,
-  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_pearson_reclicks_TE.csv"
-  )
-
-
-spearman <- cor.test(st_only$reclicks_mean, st_only$TE, method = "spearman") |>
-  tidy()
-
-write_csv(
-  spearman,
-  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_spearman_reclicks_TE.csv"
-)
-
-#sqrt transform (as reclicks more normally distributed when sqrted)
-
-pearson_sqrt <- cor.test(st_sqrt$reclicks_mean_sqrt, st_sqrt$TE_sqrt, method = "pearson") |>
-  tidy()
-
-write_csv(
-  pearson_sqrt,
-  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_pearson_sqrt_reclicks_TE.csv"
-)
-
-spearman_sqrt <- cor.test(st_sqrt$reclicks_mean_sqrt, st_sqrt$TE_sqrt, method = "spearman") |>
-  tidy()
-
-write_csv(
-  spearman_sqrt,
-  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis_spearman_sqrt_reclicks_TE.csv"
-)
-
-# linear models -----------------------------------------------------------
-
 #make just st
 single_stay <- split_by_block |>
   filter(block == "st")
+
+# correlation -------------------------------------------------------------
+
+pear_cor_trsf <- with(single_stay, cor.test(sqrt(reclicks_mean), TE, method = "pearson"))
+
+spear_cor_trsf <- with(single_stay, cor.test(sqrt(reclicks_mean), TE, method = "spearman"))
+
+
+# linear models -----------------------------------------------------------
 
 mod1 <- lm(reclicks_mean ~ TE + errors_stay, data = single_stay)
 summary(mod1)
 
 trsf_mod1 <- lm(sqrt(reclicks_mean) ~ TE + log(errors_stay + 0.001), data = single_stay)
 trsf_mod1 <- summary(trsf_mod1)
+
+trsf_mod2 <- lm(sqrt(reclicks_mean) ~ TE, data = single_stay)
+trsf_mod2 <- summary(trsf_mod2)
 
 
 # residuals ---------------------------------------------------------------
@@ -136,12 +57,13 @@ write_csv(errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysi
 trsf_rReclicks <- residuals(lm(sqrt(reclicks_mean) ~ log(errors_stay + 0.001),  data = single_stay))
 trsf_rTE <- residuals(lm(TE ~ log(errors_stay + 0.001), data = single_stay))
 
+#save a df
 trsf_errors_partialled <- data.frame(trsf_rReclicks, trsf_rTE)
-
 write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_errors_partialled_reclicks_TE.csv")
 
 
 #plot relationship (residual x residual) between errors and reclicks
+#i.e save a df
 
 errors_stay_vec <- single_stay$errors_stay
 
