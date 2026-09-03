@@ -22,9 +22,9 @@ single_stay <- split_by_block |>
 
 # correlation -------------------------------------------------------------
 
-pear_cor_trsf <- with(single_stay, cor.test(sqrt(reclicks_mean), TE, method = "pearson"))
+pear_cor_trsf <- with(single_stay, cor(sqrt(reclicks_mean), TE, method = "pearson"))
 
-spear_cor_trsf <- with(single_stay, cor.test(sqrt(reclicks_mean), TE, method = "spearman"))
+spear_cor_trsf <- with(single_stay, cor(sqrt(reclicks_mean), TE, method = "spearman"))
 
 
 # linear models -----------------------------------------------------------
@@ -61,20 +61,21 @@ trsf_rTE <- residuals(lm(TE ~ log(errors_stay + 0.001), data = single_stay))
 trsf_errors_partialled <- data.frame(trsf_rReclicks, trsf_rTE)
 write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_errors_partialled_reclicks_TE.csv")
 
+#check cor of residuals when trsf all errors partialled out
 
-#plot relationship (residual x residual) between errors and reclicks
-#i.e save a df
-
-errors_stay_vec <- single_stay$errors_stay
-
-reclicks_x_errors <- data.frame(trsf_rReclicks, log(errors_stay_vec + 0.001))
-
-reclicks_x_errors <- reclicks_x_errors |>
-  rename(
-    log_errors_stay = log.errors_stay_vec...0.001.
-  )
-
-write_csv(reclicks_x_errors, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_reclicks_x_errors.csv")
+pear_cor_err_part <- with(trsf_errors_partialled, cor(trsf_rReclicks, trsf_rTE, method = "pearson"))
 
 
+#reclicks and errors, partialling out TE
+
+trsf_r_re_by_te <- residuals(lm(sqrt(reclicks_mean) ~ TE,  data = single_stay))
+trsf_r_err_by_te <- residuals(lm(log(errors_stay + 0.001) ~ TE, data = single_stay))
+
+#save a df
+trsf_TE_partialled <- data.frame(trsf_r_re_by_te, trsf_r_err_by_te)
+write_csv(trsf_TE_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/trsf_TE_partialled_reclicks_errors.csv")
+
+#find cor between residuals
+
+pear_cor_TE_part <- with(trsf_TE_partialled, cor(trsf_r_re_by_te, trsf_r_err_by_te, method = "pearson"))
 
