@@ -63,7 +63,7 @@ graph_ts |>
     data = graph_ts, comparisons = list(c("ST","MT")),
     annotation = "*", margin_top = 0.1, size = 1.2, textsize = 10, vjust = 0.5
   ) +
-  geom_line(aes(group = sub), alpha = 0.3, colour = "grey") +
+  geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   scale_fill_manual(values = rt_pal_fill) +
   scale_colour_manual(values = rt_pal_colour) +
   plot_style() +
@@ -104,6 +104,7 @@ graph_ts |>
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   scale_fill_manual(values = tj_pal_fill) +
   scale_colour_manual(values = tj_pal_colour) +
+  geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   ylim(c(0, 3)) +
   plot_style() +
   theme(
@@ -145,6 +146,7 @@ graph_ts |>
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   scale_fill_manual(values = ge_pal_fill) +
   scale_colour_manual(values = ge_pal_colour) +
+  geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   ylim(c(0, 0.3)) +
   plot_style() +
   theme(
