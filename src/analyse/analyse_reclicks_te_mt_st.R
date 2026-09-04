@@ -43,9 +43,24 @@ trsf_rclck_mt_st <- with(df_test, t.test(sqrt(reclicks_mean_st), reclicks_mean_m
 trsf_rclck_mt_st <- tidy(trsf_rclck_mt_st)
 #reclicks scores are sig higher on mt than on st
 
+#quickly without sub 30 (our one outlier)
+df_test_outless <- df_test |>
+  filter(sub != 30)
+
+nothirty_trsf_rclck_mt_st <- with(df_test_outless, t.test(sqrt(reclicks_mean_st), reclicks_mean_mt, paired = T))
+nothirty_trsf_rclck_mt_st <- tidy(nothirty_trsf_rclck_mt_st)
+
+write_csv(
+  nothirty_trsf_rclck_mt_st,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_test_nothirty_trsf_rclck_mt_st.csv"
+)
+
 
 TE_mt_st <- with(df_test, t.test(TE_st, TE_mt, paired = T))
-
 TE_mt_st <- tidy(TE_mt_st)
 #TE scores are sig higher on st than on mt
 
+write_csv(
+  TE_mt_st,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_test_TE_mt_st.csv"
+)
