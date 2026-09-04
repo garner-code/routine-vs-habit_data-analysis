@@ -38,7 +38,7 @@ perform_dat |>
     x = 0.3,
     y = -0.18,
     fontface = "italic",
-    label = "r = -0.145"
+    label = "r = -0.171"
   ) +
   labs(
     y = "RT Cost (MT - ST)",
@@ -74,7 +74,7 @@ perform_dat |>
     x = 0.15,
     y = -0.18,
     fontface = "italic",
-    label = "r = 0.064"
+    label = "r = 0.082"
   ) +
   labs(
     y = "RT Cost (MT - ST)",
@@ -110,7 +110,7 @@ perform_dat |>
     x = 0.15,
     y = -0.18,
     fontface = "italic",
-    label = "r = -0.069"
+    label = "r = -0.109"
   ) +
   labs(
     y = "RT Cost (MT - ST)",
@@ -148,7 +148,7 @@ perform_dat |>
     x = 0.4,
     y = -1.6,
     fontface = "italic",
-    label = "r = 0.066"
+    label = "r = -0.010"
   ) +
   labs(
     y = "Task Jump Cost (MT - ST)",
@@ -184,7 +184,7 @@ perform_dat |>
     x = 0.15,
     y = -1.6,
     fontface = "italic",
-    label = "r = -0.017"
+    label = "r = 0.186"
   ) +
   labs(
     y = "RT Cost (MT - ST)",
@@ -220,7 +220,7 @@ perform_dat |>
     x = 0.15,
     y = -1.6,
     fontface = "italic",
-    label = "r = -0.237"
+    label = "r = 0.412"
   ) +
   labs(
     y = "RT Cost (MT - ST)",
