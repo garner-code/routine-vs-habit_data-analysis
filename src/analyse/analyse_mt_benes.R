@@ -61,4 +61,38 @@ summary(tjcost_trsf_mod_err)
 #ns
 
 
+# correlations ------------------------------------------------------------
+
+#rt versus
+
+  #reclicks
+
+with(perform_dat, cor(reclicks_mean, RT_cost))
+
+  #te
+
+with(perform_dat, cor(TE, RT_cost))
+
+  #general errors
+
+with(perform_dat, cor(errors_stay, RT_cost))
+
+#tj versus
+
+outless <- perform_dat |>
+  filter(sub != 8, sub != 9, sub != 11)
+
+  #reclicks
+
+with(outless, cor(reclicks_mean, tj_cost))
+
+  #te
+
+with(outless, cor(TE, tj_cost))
+
+  #general errors
+
+with(outless, cor(errors_stay, tj_cost))
+
+
 
