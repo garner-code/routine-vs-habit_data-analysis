@@ -58,7 +58,8 @@ summary(tjcost_mod_err)
 
 tjcost_trsf_mod_err <- lm(tj_cost ~ TE + sqrt(reclicks_mean) + log(errors_stay + 0.001), data = perform_dat)
 summary(tjcost_trsf_mod_err)
-#ns
+#errors sig - errors sig predict task jumping
+#i.e they were a bit lost.
 
 
 # correlations ------------------------------------------------------------
@@ -79,20 +80,17 @@ with(perform_dat, cor(errors_stay, RT_cost))
 
 #tj versus
 
-outless <- perform_dat |>
-  filter(sub != 8, sub != 9, sub != 11)
-
   #reclicks
 
-with(outless, cor(reclicks_mean, tj_cost))
+with(perform_dat, cor(reclicks_mean, tj_cost))
 
   #te
 
-with(outless, cor(TE, tj_cost))
+with(perform_dat, cor(TE, tj_cost))
 
   #general errors
 
-with(outless, cor(errors_stay, tj_cost))
+with(perform_dat, cor(errors_stay, tj_cost))
 
 
 
