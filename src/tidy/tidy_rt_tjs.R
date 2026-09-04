@@ -10,7 +10,7 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 averages <- read_csv(
-  "averages_no_tj_outs.csv",
+  "averages_no_n_nc_no_nback_outs.csv",
   na = c("", "NA")
 )
 

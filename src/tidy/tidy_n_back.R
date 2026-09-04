@@ -27,10 +27,6 @@ counts <- read_csv(
 
 # tidying time ------------------------------------------------------------
 
-#manually naing bc im in a hurry
-#our exclusions at > 0.6 sens = 13, 23, 25, 28, 51, 61, 73, 76, 85
-
-
 #very simple I just want to get 85 rows with only the mt data
 #and exclude our outliers
 
@@ -38,16 +34,15 @@ n_back_mt <- n_back |>
   filter(block == "mt")
 
 excl <- n_back_mt |>
-  filter(sens < 0.65)
+  filter(sens < 0.60)
 
-exclude_sixfive <- unique(excl$sub)
+exclude_sixty <- unique(excl$sub)
 
+exclude_n_nc_sens <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
 
 n_back_mt <- n_back_mt %>%
-  filter(!sub %in% excl)
+  filter(!sub %in% exclude_n_nc_sens)
 #above is now outlierless.
-
-write_csv(n_back_mt, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_nback_mt.csv")
 
 #lets also join the data to the averages data
 
@@ -72,18 +67,9 @@ n_back_averages <- n_back_averages |>
   ) |>
   select(sub:rt_mean_switch, hits:spec)
 
-#now get rid of our 3 task jump outlier ps
+#now write a csv
+write_csv(n_back_averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_n_back_averages_outless.csv")
 
-tj_exclude <- c(8, 9, 11)
-
-n_back_averages <- n_back_averages %>%
-  filter(!sub %in% tj_exclude)
-
-
-write_csv(n_back_averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_n_back_averages.csv")
-
-#finally lets make a long form of this df
-#tbd if I ever need it.
 
 # impact of counts and n-back ----------------------------------------------------------------
 df <- counts |>
@@ -101,7 +87,7 @@ df <- counts |>
 n_back_tjs <- inner_join(df, n_back_averages, by = "sub") |>
   relocate(sub, ses, block)
 
-write_csv(n_back_tjs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_n_back_task_jumps_outlierless.csv")
+write_csv(n_back_tjs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/routine_vs_habit_n_back_n_nc_tjs.csv")
 
 
 

@@ -14,11 +14,6 @@ averages <- read_csv(
   na = c("", "NA")
 )
 
-averages_democohs <- read_csv(
-  "averages_democohs.csv",
-  na = c("", "NA")
-)
-
 
 # first exclusion n_nc trials ---------------------------------------------
 
@@ -33,21 +28,14 @@ averages <- averages %>%
   filter(!sub %in% subs2excl)
 write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_n_nc_outs.csv")
 
-averages_democohs <- averages_democohs |>
-  filter(!sub %in% subs2excl)
-
-write_csv(averages_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_democohs_no_n_nc_outs.csv")
-
 # exclusion 2 - nback -----------------------------------------------------
 #criteria is < 0.60 across both sens and spec
 #only sens has outliers
 
-write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_tj_no_nback_outs.csv")
-
-exclude_sixfive <- c(13, 22, 25, 28, 51, 61, 63, 73, 76, 77, 84, 85)
+exclude_sixty <- c(13, 22, 25, 28, 51, 61, 73, 76, 85)
 
 averages <- averages |>
-  filter(!sub %in% exclude_sixfive)
+  filter(!sub %in% exclude_sixty)
 
 write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_n_nc_no_nback_outs.csv")
 

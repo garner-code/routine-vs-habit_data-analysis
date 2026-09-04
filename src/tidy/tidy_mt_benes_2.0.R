@@ -12,7 +12,7 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 averages <- read_csv(
-  "averages_no_tj_outs.csv",
+  "averages_no_n_nc_no_nback_outs.csv",
   na = c("", "NA")
 )
 
@@ -30,6 +30,7 @@ ind_predictors <- split_by_block |>
 
 
 #create costs df (difference scores in rt and errors per sub)
+#note costs df has outliers (n_nc and sens < 60) taken out
 costs <- averages |>
   filter(ses == 4 & switch == 0) |>
   group_by(sub) |>
