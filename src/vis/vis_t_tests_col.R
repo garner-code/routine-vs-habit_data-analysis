@@ -16,10 +16,9 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 averages <- read_csv(
-  "routine_vs_habit_avg.csv",
+  "averages_no_n_nc_no_nback_outs.csv",
   na = c("", "NA")
 )
-
 # tidy --------------------------------------------------------------------
 
 graph_ts <- averages |>
@@ -61,7 +60,7 @@ graph_ts |>
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   geom_signif(
     data = graph_ts, comparisons = list(c("ST","MT")),
-    annotation = "*", margin_top = 0.1, size = 1.2, textsize = 10, vjust = 0.5
+    annotation = "***", margin_top = 0.1, size = 1.2, textsize = 10, vjust = 0.5
   ) +
   geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   scale_fill_manual(values = rt_pal_fill) +
@@ -87,13 +86,17 @@ ggsave(
   height = 6,
 )
 
- ###################
+ggsave(
+  "rt_dif_ttest.svg",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
+  height = 6,
+)
 
-#as in our analysis, exclude n-back sens and n_nc outliers
-outs <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
+ ###################
+#task jumps
 
 graph_ts |>
-  filter(!sub %in% outs) |>
   ggplot(aes(x = block, y = tj_mean)) +
   stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
   geom_point(
@@ -102,6 +105,10 @@ graph_ts |>
   ) +
   stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
+  geom_signif(
+    data = graph_ts, comparisons = list(c("ST","MT")),
+    annotation = "***", margin_top = 0.1, size = 1.2, textsize = 10, vjust = 0.5
+  ) +
   scale_fill_manual(values = tj_pal_fill) +
   scale_colour_manual(values = tj_pal_colour) +
   geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
@@ -127,6 +134,13 @@ ggsave(
   height = 6,
 )
 
+ggsave(
+  "tj_dif_ttest.svg",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
+  height = 6,
+)
+
  ####################
 
 #finally gen errors
@@ -135,7 +149,6 @@ ggsave(
 
 
 graph_ts |>
-  filter(!sub %in% outs) |>
   ggplot(aes(x = block, y = ges_mean)) +
   stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
   geom_point(
@@ -144,6 +157,10 @@ graph_ts |>
   ) +
   stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
   stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
+  geom_signif(
+    data = graph_ts, comparisons = list(c("ST","MT")),
+    annotation = "*", margin_top = 1.2, size = 1.5, textsize = 10, vjust = 0.1
+  ) +
   scale_fill_manual(values = ge_pal_fill) +
   scale_colour_manual(values = ge_pal_colour) +
   geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
@@ -168,3 +185,11 @@ ggsave(
   width = 3,
   height = 6,
 )
+
+ggsave(
+  "ge_dif_ttest.svg",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
+  height = 6,
+)
+
