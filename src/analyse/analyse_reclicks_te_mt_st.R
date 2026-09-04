@@ -43,7 +43,9 @@ trsf_rclck_mt_st <- with(df_test, t.test(sqrt(reclicks_mean_st), reclicks_mean_m
 trsf_rclck_mt_st <- tidy(trsf_rclck_mt_st)
 #reclicks scores are sig higher on mt than on st
 
+
 TE_mt_st <- with(df_test, t.test(TE_st, TE_mt, paired = T))
+
 TE_mt_st <- tidy(TE_mt_st)
 #TE scores are sig higher on st than on mt
 
