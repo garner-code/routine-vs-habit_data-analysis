@@ -1,0 +1,236 @@
+################################################################################
+############              SL vis  benes of reclicks, TE           ##############
+################################################################################
+
+rm(list=ls())
+library(tidyverse)
+library(paletteer)
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/src")
+source("plot_style.R")
+
+#change to whatever wd is
+setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
+
+#read in data
+perform_dat <- read_csv(
+  "perform_dat_errors.csv",
+  na = c("", "NA")
+)
+
+# rt ----------------------------------------------------------------------
+
+#reclicks
+perform_dat |>
+  ggplot(aes(x = sqrt(reclicks_mean), y = RT_cost)) +
+  geom_point(shape = 21, size = 3.5, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#1F78B4FF") +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+  ) +
+  annotate(
+    geom = "text",
+    size = 4,
+    x = 0.3,
+    y = -0.18,
+    fontface = "italic",
+    label = "r = -0.145"
+  ) +
+  labs(
+    y = "RT Cost (MT - ST)",
+    x = "Mean Reclicks"
+  )
+
+ggsave(
+  "RTcost_x_reclicks.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  height = 4,
+  width = 4
+)
+
+#TE
+perform_dat |>
+  ggplot(aes(x = TE, y = RT_cost)) +
+  geom_point(shape = 23, size = 3.5, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#1F78B4FF") +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_blank()
+  ) +
+  annotate(
+    geom = "text",
+    size = 4,
+    x = 0.15,
+    y = -0.18,
+    fontface = "italic",
+    label = "r = 0.064"
+  ) +
+  labs(
+    y = "RT Cost (MT - ST)",
+    x = "Mean TE"
+  )
+
+ggsave(
+  "RTcost_x_TE.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  height = 4,
+  width = 4
+)
+
+
+perform_dat |>
+  ggplot(aes(x = errors_stay, y = RT_cost)) +
+  geom_point(shape = 24, size = 3.2, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#1F78B4FF") +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_blank()
+  ) +
+  annotate(
+    geom = "text",
+    size = 4,
+    x = 0.15,
+    y = -0.18,
+    fontface = "italic",
+    label = "r = -0.069"
+  ) +
+  labs(
+    y = "RT Cost (MT - ST)",
+    x = "Mean Non-Context Errors"
+  )
+
+ggsave(
+  "RTcost_x_errors.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  height = 4,
+  width = 4
+)
+
+# task jumps --------------------------------------------------------------
+#it will give an error that 3 rows have been dropped
+#these are subs 8 9 and 11 who had too few trials from which to calculate a task jump cost
+
+
+#reclicks
+perform_dat |>
+  ggplot(aes(x = sqrt(reclicks_mean), y = tj_cost)) +
+  geom_point(shape = 21, size = 3.5, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#33A02CFF") +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+  ) +
+  annotate(
+    geom = "text",
+    size = 4,
+    x = 0.4,
+    y = -1.6,
+    fontface = "italic",
+    label = "r = 0.066"
+  ) +
+  labs(
+    y = "Task Jump Cost (MT - ST)",
+    x = "Mean Reclicks"
+  )
+
+ggsave(
+  "TJcost_x_reclicks.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  height = 4,
+  width = 4
+)
+
+#TE
+perform_dat |>
+  ggplot(aes(x = TE, y = tj_cost)) +
+  geom_point(shape = 23, size = 3.5, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#33A02CFF") +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_blank()
+  ) +
+  annotate(
+    geom = "text",
+    size = 4,
+    x = 0.15,
+    y = -1.6,
+    fontface = "italic",
+    label = "r = -0.017"
+  ) +
+  labs(
+    y = "RT Cost (MT - ST)",
+    x = "Mean TE"
+  )
+
+ggsave(
+  "TJcost_x_TE.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  height = 4,
+  width = 4
+)
+
+
+perform_dat |>
+  ggplot(aes(x = errors_stay, y = tj_cost)) +
+  geom_point(shape = 24, size = 3.2, stroke = 1.1, fill = "#899DA495", colour = "black") +
+  geom_smooth(method = 'lm', formula = 'y ~ x', se = F, colour = "#33A02CFF") +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_text(margin = margin (t = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_blank()
+  ) +
+  annotate(
+    geom = "text",
+    size = 4,
+    x = 0.15,
+    y = -1.6,
+    fontface = "italic",
+    label = "r = -0.237"
+  ) +
+  labs(
+    y = "RT Cost (MT - ST)",
+    x = "Mean Non-Context Errors"
+  )
+
+ggsave(
+  "TJcost_x_errors.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  height = 4,
+  width = 4
+)
+
