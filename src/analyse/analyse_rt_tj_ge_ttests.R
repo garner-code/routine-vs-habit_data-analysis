@@ -12,25 +12,25 @@ setwd("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res")
 
 #read in data
 
-avgs_sum_rt_dur <- read_csv(
-  "averages_rt_dur.csv",
+averages <- read_csv(
+  "routine_vs_habit_avg.csv",
   na = c("", "NA")
 )
 
 outlierless <- read_csv(
-  "averages_rt_dur_outless.csv",
+  "averages_no_n_nc_no_nback_outs.csv",
   na = c("", "NA")
 )
 
 # tidy data --------------------------------------------------------------------
 
 #no transform, outliers included
-all_for_t_tests <- avgs_sum_rt_dur |>
+all_for_t_tests <- averages |>
   filter(ses == 4 & switch == 0) |>
-  select(sub, block, rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean, sum_rt_dur) |>
+  select(sub, block, rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean) |>
   pivot_wider(
     names_from = block,
-    values_from = c(rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean, sum_rt_dur)
+    values_from = c(rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean)
   )
 
 #log transform, outliers included
@@ -40,20 +40,17 @@ all_for_t_tests_trsf <- all_for_t_tests |>
     rt_st_log          = log(rt_mean_st + 0.001),
     tj_mt_log          = log(task_jumps_mean_mt + 0.001),
     tj_st_log          = log(task_jumps_mean_st + 0.001),
-    sum_rt_dur_mt_sqrt = sqrt(sum_rt_dur_mt),
-    sum_rt_dur_st_sqrt = sqrt(sum_rt_dur_st)
   ) |>
-  select(sub, rt_mt_log, rt_st_log, tj_mt_log, tj_st_log, sum_rt_dur_mt_sqrt, sum_rt_dur_st_sqrt)
-
+  select(sub, rt_mt_log, rt_st_log, tj_mt_log, tj_st_log)
 
 
 #no transform, no outliers
 for_t_tests <- outlierless |>
   filter(ses == 4 & switch == 0) |>
-  select(sub, block, rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean, sum_rt_dur) |>
+  select(sub, block, rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean) |>
   pivot_wider(
     names_from = block,
-    values_from = c(rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean, sum_rt_dur)
+    values_from = c(rt_mean, accuracy_mean, task_jumps_mean, general_errors_mean)
   )
 
 #log transform, no outliers
@@ -62,11 +59,9 @@ for_t_tests_trsf <- for_t_tests |>
     rt_mt_log          = log(rt_mean_mt + 0.001),
     rt_st_log          = log(rt_mean_st + 0.001),
     tj_mt_log          = log(task_jumps_mean_mt + 0.001),
-    tj_st_log          = log(task_jumps_mean_st + 0.001),
-    sum_rt_dur_mt_sqrt = sqrt(sum_rt_dur_mt),
-    sum_rt_dur_st_sqrt = sqrt(sum_rt_dur_st)
+    tj_st_log          = log(task_jumps_mean_st + 0.001)
   ) |>
-  select(sub, rt_mt_log, rt_st_log, tj_mt_log, tj_st_log, sum_rt_dur_mt_sqrt, sum_rt_dur_st_sqrt)
+  select(sub, rt_mt_log, rt_st_log, tj_mt_log, tj_st_log)
 
 
 # analyse ----------------------------------------------------------------------
@@ -80,7 +75,7 @@ for_t_tests_trsf <- for_t_tests |>
 
 t_rt_outless <- with(for_t_tests, t.test(rt_mean_st, rt_mean_mt, paired = T))
 t_rt_outless <- tidy(t_rt_outless)
-#sig
+#sig (very much so)
 write_csv(
   t_rt_outless,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_rt_outless.csv"
@@ -88,7 +83,7 @@ write_csv(
 
 t_rt_outless_trsf <- with(for_t_tests_trsf, t.test(rt_st_log, rt_mt_log, paired = T))
 t_rt_outless_trsf <- tidy(t_rt_outless_trsf)
-#sig
+#sig (very much so)
 write_csv(
   t_rt_outless_trsf,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_rt_outless_trsf.csv"
@@ -96,25 +91,24 @@ write_csv(
 
 t_tj_outless <- with(for_t_tests, t.test(task_jumps_mean_st, task_jumps_mean_mt, paired = T))
 t_tj_outless <- tidy(t_tj_outless)
-#sig
+#sig (very)
 write_csv(
   t_tj_outless,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_tj_outless.csv"
 )
 
-
 t_tj_outless_trsf <- with(for_t_tests_trsf, t.test(tj_st_log, tj_mt_log, paired = T))
 t_tj_outless_trsf <- tidy(t_tj_outless_trsf)
-#sig with 0.6 (very much so)
+#sig (very much so)
 write_csv(
   t_tj_outless_trsf,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/t_tj_outless_trsf.csv"
 )
 
-#ge
+#ge (no transform appropriate)
 t_ge_outless <- with(for_t_tests, t.test(general_errors_mean_st, general_errors_mean_mt, paired = T))
 t_ge_outless <- tidy(t_ge_outless)
-#sig (as expected)
+#sig (but not too many ges being made)
 
 write_csv(
   t_ge_outless,
@@ -154,9 +148,9 @@ write_csv(
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/all_t_rt_trsf.csv"
 )
 
-all_t_tj <- with(all_for_t_tests, t.test(task_jumps_mean_st, task_jumps_mean_mt))
+all_t_tj <- with(all_for_t_tests, t.test(task_jumps_mean_st, task_jumps_mean_mt, paired = T))
 all_t_tj <- tidy(all_t_tj)
-#ns - interesting as outlierless is sig
+#ns - this makes sense - if you aren't multitasking you are less likely to task jump
 write_csv(
   all_t_tj,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/all_t_tj.csv"
@@ -165,7 +159,7 @@ write_csv(
 #now ge
 all_t_ge <- with(all_for_t_tests, t.test(general_errors_mean_st, general_errors_mean_mt, paired = T))
 all_t_ge <- tidy(all_t_ge)
-#sig
+#sig - highly similar with and without outliers
 
 write_csv(
   all_t_ge,
@@ -183,30 +177,6 @@ write_csv(
   all_trsf_summary,
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/all_summary_tj_rt_ttests_trsf.csv"
 )
-
-
-# checking if sum_rt_dur solves our problems ------------------------------
-#with and without outs
-#with and without sqrt trsf
-
-all_sum_rt_dur <- with(all_for_t_tests, t.test(sum_rt_dur_st, sum_rt_dur_mt, paired = T))
-all_sum_rt_dur <- tidy(all_sum_rt_dur)
-#sig
-
-all_sum_rt_dur_trsf <- with(all_for_t_tests_trsf, t.test(sum_rt_dur_st_sqrt, sum_rt_dur_mt_sqrt, paired = T))
-all_sum_rt_dur_trsf <- tidy(all_sum_rt_dur_trsf)
-#sig
-
-
-#now with n_nc and sens < 0.6 outliers
-
-sum_rt_dur_outless <- with(for_t_tests, t.test(sum_rt_dur_st, sum_rt_dur_mt, paired = T))
-sum_rt_dur_outless <- tidy(sum_rt_dur_outless)
-#sig
-
-sum_rt_dur_outless_trsf <- with(for_t_tests_trsf, t.test(sum_rt_dur_st_sqrt, sum_rt_dur_mt_sqrt, paired = T))
-sum_rt_dur_outless_trsf <- tidy(sum_rt_dur_outless_trsf)
-#sig
 
 #out of curiosity im gonna get rid of the 0.65 and 0.7 peeps
 #and test them
@@ -238,17 +208,3 @@ with(df1_trsf, t.test(tj_st_log, tj_mt_log, paired = T))
 ge_sixfive <- with(df1, t.test(general_errors_mean_st, general_errors_mean_mt, paired = T))
 tidy(ge_sixfive)
 #still sig
-
-########sum rt_dur
-
-with(df1, t.test(sum_rt_dur_st, sum_rt_dur_mt, paired = T))
-#sig
-
-with(df1_trsf, t.test(sum_rt_dur_st_sqrt, sum_rt_dur_mt_sqrt, paired = T))
-#sig
-
-with(df2, t.test(sum_rt_dur_st, sum_rt_dur_mt, paired = T))
-#sig
-
-with(df2_trsf, t.test(sum_rt_dur_st_sqrt, sum_rt_dur_mt_sqrt, paired = T))
-#sig
