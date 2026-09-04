@@ -39,7 +39,7 @@ averages_democohs <- averages_democohs |>
 write_csv(averages_democohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_democohs_no_n_nc_outs.csv")
 
 # exclusion 2 - nback -----------------------------------------------------
-#criteria is < 0.65 across both sens and spec
+#criteria is < 0.60 across both sens and spec
 #only sens has outliers
 
 write_csv(averages, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/averages_no_tj_no_nback_outs.csv")

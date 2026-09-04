@@ -19,11 +19,6 @@ long_rt_tj <- read_csv(
   na = c("", "NA")
 )
 
-n_back_averages <- read_csv(
-  "routine_vs_habit_n_back_averages.csv",
-  na = c("", "NA")
-)
-
 counts <- read_csv(
   "routine_vs_habit_nc_trial_counts.csv",
   na = c("", "NA")
