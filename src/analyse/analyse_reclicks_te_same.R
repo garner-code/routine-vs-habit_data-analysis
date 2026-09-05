@@ -35,8 +35,13 @@ summary(mod1)
 trsf_mod1 <- lm(sqrt(reclicks_mean) ~ TE + log(errors_stay + 0.001), data = single_stay)
 trsf_mod1 <- summary(trsf_mod1)
 
-trsf_mod2 <- lm(sqrt(reclicks_mean) ~ TE, data = single_stay)
+trsf_mod2 <- lm(sqrt(reclicks_mean) ~ log(errors_stay + 0.001), data = single_stay)
 trsf_mod2 <- summary(trsf_mod2)
+
+#R^2 change is difference between mod 1 R2 and mod2 R2
+
+#R2 change is 0.20300 - 0.03686 = 0.16614
+
 
 
 # residuals ---------------------------------------------------------------
@@ -63,7 +68,7 @@ write_csv(trsf_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-an
 
 #check cor of residuals when trsf all errors partialled out
 
-pear_cor_err_part <- with(trsf_errors_partialled, cor(trsf_rReclicks, trsf_rTE, method = "pearson"))
+pear_cor_err_part <- with(trsf_errors_partialled, cor.test(trsf_rReclicks, trsf_rTE, method = "pearson"))
 
 
 #reclicks and errors, partialling out TE
@@ -77,10 +82,6 @@ write_csv(trsf_TE_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analys
 
 #find cor between residuals
 
-pear_cor_TE_part <- with(trsf_TE_partialled, cor(trsf_r_re_by_te, trsf_r_err_by_te, method = "pearson"))
+pear_cor_TE_part <- with(trsf_TE_partialled, cor.test(trsf_r_re_by_te, trsf_r_err_by_te, method = "pearson"))
 
-
-#cor residuals reclicks, te
-
-s
 
