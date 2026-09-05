@@ -25,6 +25,7 @@ averages <- read_csv(
 # tidy --------------------------------------------------------------------
 remove <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
 
+#raincloud
 graph_reclicks <- averages |>
   filter(ses == 4, switch == 1) |>
   group_by(sub, block) |>
@@ -45,8 +46,40 @@ graph_TE <- averages |>
   ) |>
   filter(!sub %in% remove)
 
-pal_fill <- c("#42439590", "#2C176990", "#90D4CC90","#0A9F9D90" )
-pal_colour <- c("#424395FF", "#2C1769FF", "#90D4CCFF", "#0A9F9DFF")
+
+#cols
+col_reclicks <- averages |>
+  filter(ses == 4, switch == 1 ) |>
+  group_by(sub, block) |>
+  mutate(
+    block = factor(block, c("st", "mt"), c("ST", "MT"))
+  ) |>
+  summarise(
+    reclicks_mean = mean(reclicks_mean)
+  ) |>
+  filter(!sub %in% remove)
+
+col_TE <- averages |>
+  filter(ses == 4, switch == 0) |>
+  group_by(sub, block) |>
+  mutate(
+    block = factor(block, c("st", "mt"), c("ST", "MT"))
+  ) |>
+  summarise(
+    TE_mean = mean(TE)
+  ) |>
+  filter(!sub %in% remove)
+
+###alternative colours:
+#fill: "#42439590", "#2C176990"
+#colour "#424395FF", "#2C1769FF"
+
+
+pal_fill <- c("#FD646790", "#C9331290", "#90D4CC90","#0A9F9D90" )
+pal_colour <- c("#FD6467FF", "#C93312FF", "#90D4CCFF", "#0A9F9DFF")
+
+
+#C93312FF
 
 reclicks_pal_fill <- pal_fill[c(1, 2)]
 reclicks_pal_colour <- pal_colour[c(1, 2)]
@@ -188,5 +221,93 @@ ggsave(
   "TE_dif_ttest_raincloud.svg",
   path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
   width = 4,
+  height = 6,
+)
+
+
+
+# col graphs --------------------------------------------------------------
+
+col_reclicks |>
+  filter(sub != 30) |>
+  ggplot(aes(x = block, y = reclicks_mean)) +
+  stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
+  geom_point(
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    position = position_dodge(width = 0.5), shape = 21, size = 3.5
+  ) +
+  stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
+  stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
+  geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
+  scale_fill_manual(values = reclicks_pal_fill) +
+  scale_colour_manual(values = reclicks_pal_colour) +
+  ylim(0, 10) +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    legend.position = "none",
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
+  ) +
+  labs(
+    y = "Mean Reclicks"
+  )
+
+ggsave(
+  "reclicks_dif_ttest.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
+  height = 6,
+)
+
+ggsave(
+  "reclcicks_dif_ttest.svg",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
+  height = 6,
+)
+
+
+col_TE |>
+  ggplot(aes(x = block, y = TE_mean)) +
+  stat_summary(fun = "mean", geom = "col", fill = "grey", colour = "grey") +
+  geom_point(
+    aes(stroke = 1.1, colour = block, fill = block, group = sub),
+    position = position_dodge(width = 0.5), shape = 21, size = 3.5
+  ) +
+  stat_summary(fun = "mean", geom = "point", fill = "black", colour = "black", size = 2.5) +
+  stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
+  geom_line(aes(group = sub), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
+  scale_fill_manual(values = TE_pal_fill) +
+  scale_colour_manual(values = TE_pal_colour) +
+  ylim(0, 1) +
+  plot_style() +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(margin = margin (r = 15)),
+    axis.line = element_line(colour = "grey"),
+    axis.ticks = element_line(colour = "grey"),
+    legend.position = "none",
+    strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
+  ) +
+  labs(
+    y = "Mean TE"
+  )
+
+ggsave(
+  "TE_dif_ttest.png",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
+  height = 6,
+)
+
+ggsave(
+  "TE_dif_ttest.svg",
+  path = ("C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/plots/thesis"),
+  width = 3,
   height = 6,
 )
