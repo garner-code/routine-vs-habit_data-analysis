@@ -48,7 +48,7 @@ trsf_partial |>
   ) +
   annotate(
     geom = "text",
-    size = 4,
+    size = 4.5,
     x = -0.3,
     y = -1.2,
     fontface = "italic",
@@ -83,15 +83,15 @@ reclicks_x_errors |>
   ) +
   annotate(
     geom = "text",
-    size = 4,
+    size = 4.5,
     x = -2.2,
     y = 1.4,
     fontface = "italic",
     label = "r = 0.053"
   ) +
   labs(
-    y = "Reclicks | All Errors",
-    x = "Errors (No Context Switch)"
+    y = "Reclicks | TE",
+    x = "All Errors | TE"
   )
 
 ggsave(
