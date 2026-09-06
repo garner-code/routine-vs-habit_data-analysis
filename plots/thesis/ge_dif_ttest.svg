@@ -185,12 +185,12 @@
 <circle cx='186.28' cy='268.54' r='4.51' style='stroke-width: 1.56; stroke: #FF7F00; fill: #FF7F00; fill-opacity: 0.56;' />
 <circle cx='100.78' cy='383.36' r='3.02' style='stroke-width: 0.71; fill: #000000;' />
 <circle cx='169.37' cy='378.98' r='3.02' style='stroke-width: 0.71; fill: #000000;' />
-<polyline points='100.78,378.36 100.78,378.36 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
-<polyline points='100.78,378.36 100.78,387.35 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
-<polyline points='100.78,387.35 100.78,387.35 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
-<polyline points='169.37,372.35 169.37,372.35 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
-<polyline points='169.37,372.35 169.37,384.52 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
-<polyline points='169.37,384.52 169.37,384.52 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
+<polyline points='100.78,377.90 100.78,377.90 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
+<polyline points='100.78,377.90 100.78,387.31 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
+<polyline points='100.78,387.31 100.78,387.31 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
+<polyline points='169.37,372.15 169.37,372.15 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
+<polyline points='169.37,372.15 169.37,384.53 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
+<polyline points='169.37,384.53 169.37,384.53 ' style='stroke-width: 2.77; stroke-linecap: butt;' />
 <text x='135.08' y='67.21' text-anchor='middle' style='font-size: 28.45px; font-family: "Arial";' textLength='11.06px' lengthAdjust='spacingAndGlyphs'>*</text>
 <line x1='169.37' y1='73.58' x2='169.37' y2='69.20' style='stroke-width: 3.20;' />
 <line x1='169.37' y1='69.20' x2='100.78' y2='69.20' style='stroke-width: 3.20;' />
@@ -284,7 +284,7 @@
 <polyline points='169.37,411.36 169.37,408.62 ' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-linecap: butt;' />
 <text x='100.78' y='423.58' text-anchor='middle' style='font-size: 14.00px; font-family: "Arial";' textLength='17.89px' lengthAdjust='spacingAndGlyphs'>ST</text>
 <text x='169.37' y='423.58' text-anchor='middle' style='font-size: 14.00px; font-family: "Arial";' textLength='20.20px' lengthAdjust='spacingAndGlyphs'>MT</text>
-<text transform='translate(16.93,207.05) rotate(-90)' text-anchor='middle' style='font-size: 16.00px; font-weight: bold; font-family: "Arial";' textLength='193.94px' lengthAdjust='spacingAndGlyphs'>Mean Non-Context Errors</text>
+<text transform='translate(16.93,207.05) rotate(-90)' text-anchor='middle' style='font-size: 16.00px; font-weight: bold; font-family: "Arial";' textLength='157.53px' lengthAdjust='spacingAndGlyphs'>Mean General Errors</text>
 </g>
 </g>
 </svg>

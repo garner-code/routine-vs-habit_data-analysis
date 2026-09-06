@@ -176,7 +176,7 @@ graph_ts |>
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
   labs(
-    y = "Mean Non-Context Errors"
+    y = "Mean General Errors"
   )
 
 ggsave(
