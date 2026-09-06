@@ -37,8 +37,7 @@ costs <- averages |>
   summarise(
     RT_cost = rt_mean[block == "mt"] - rt_mean[block == "st"],
     error_cost = all_errors_mean[block == "mt"] - all_errors_mean[block == "st"],
-    tj_cost = task_jumps_mean[block == "mt"] - task_jumps_mean[block == "st"],
-    ge_cost = general_errors_mean[block = "mt"] - general_errors_mean[block == "st"]
+    tj_cost = task_jumps_mean[block == "mt"] - task_jumps_mean[block == "st"]
   )
 write_csv(costs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/costs.csv")
 
