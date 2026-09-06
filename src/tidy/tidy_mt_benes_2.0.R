@@ -46,14 +46,3 @@ perform_dat <- inner_join(ind_predictors, costs, by = "sub")
 write_csv(perform_dat, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_dat_errors.csv")
 
 
-# and impact compared to cohs ---------------------------------------------
-cohs_preds <- split_by_block |>
-  filter(block == "st") |>
-  select(sub, auto, rout)
-
-perform_cohs <- inner_join(cohs_preds, costs, by = "sub")
-
-write_csv(perform_cohs, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/perform_cohs.csv")
-
-
-
