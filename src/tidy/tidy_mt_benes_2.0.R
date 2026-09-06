@@ -26,7 +26,7 @@ split_by_block <- read_csv(
 #using stay trials for errors
 ind_predictors <- split_by_block |>
   filter(block == "st") |>
-  select(sub:errors_stay)
+  select(sub:errors_stay, ge_stay)
 
 
 #create costs df (difference scores in rt and errors per sub)

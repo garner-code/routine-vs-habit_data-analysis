@@ -20,6 +20,9 @@ perform_dat <- read_csv(
   na = c("", "NA")
 )
 
+no_thirty <- perform_dat |>
+  filter(sub != 30)
+
 # TE and Reclicks ---------------------------------------------------------
 
 #rt
@@ -41,23 +44,14 @@ summary(tjcost_trsf_mod)
 #ns
 
 
-# TE, reclicks and all_errors_stay ----------------------------------------
+# TE, reclicks and general errors ----------------------------------------
 
-rtcost_mod_err <- lm(RT_cost ~ TE + reclicks_mean + errors_stay, data = perform_dat)
-summary(rtcost_mod_err)
-#ns
+rtcost_trsf_thirtyless <- lm(RT_cost ~ TE + sqrt(reclicks_mean) + ge_stay, data = no_thirty)
+summary(rtcost_trsf_thirtyless)
+#ns overall, sig on reclicks as predictor
 
-rtcost_trsf_mod_err <- lm(RT_cost ~ TE + sqrt(reclicks_mean) + log(errors_stay + 0.001), data = perform_dat)
-summary(rtcost_mod_err)
-#ns
-
-
-tjcost_mod_err <- lm(tj_cost ~ TE + reclicks_mean + errors_stay, data = perform_dat)
-summary(tjcost_mod_err)
-#sig for errors (but with no transforms which is bad practice bc trsfs make more normal)
-
-tjcost_trsf_mod_err <- lm(tj_cost ~ TE + sqrt(reclicks_mean) + log(errors_stay + 0.001), data = perform_dat)
-summary(tjcost_trsf_mod_err)
+tjcost_trsf_mod_thirtyless <- lm(tj_cost ~ TE + sqrt(reclicks_mean) + ge_stay, data = no_thirty)
+summary(tjcost_trsf_mod_thirtyless)
 #errors sig - errors sig predict task jumping
 #i.e they were a bit lost.
 
@@ -68,29 +62,29 @@ summary(tjcost_trsf_mod_err)
 
   #reclicks
 
-with(perform_dat, cor(reclicks_mean, RT_cost))
+with(no_thirty, cor(reclicks_mean, RT_cost))
 
   #te
 
 with(perform_dat, cor(TE, RT_cost))
 
-  #general errors
+  #ge stay
 
-with(perform_dat, cor(errors_stay, RT_cost))
+with(perform_dat, cor(ge_stay, RT_cost))
 
 #tj versus
 
   #reclicks
 
-with(perform_dat, cor(reclicks_mean, tj_cost))
+with(no_thirty, cor(reclicks_mean, tj_cost))
 
   #te
 
 with(perform_dat, cor(TE, tj_cost))
 
-  #general errors
+  #ge stay
 
-with(perform_dat, cor(errors_stay, tj_cost))
+with(perform_dat, cor(ge_stay, tj_cost))
 
 
 
