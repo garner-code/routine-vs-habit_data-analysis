@@ -128,6 +128,35 @@ write_csv(
   "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/outless_trsf_summary.csv"
 )
 
+#lets also get summary stats agnostic of mt or rt (for results section)
+remove <- c(8, 9, 11, 13, 22, 25, 28, 51, 61, 73, 76, 85)
+
+
+sum_blockagnostic_outlierless <- averages |>
+  filter(!sub %in% remove) |>
+  filter(ses == 4) |>
+  group_by(sub) |>
+  summarise(
+    rt_mean = mean(rt_mean),
+    tj_mean = mean(task_jumps_mean),
+    ge_mean = mean(general_errors_mean),
+    all_err_mean = mean(all_errors_mean)
+  )
+
+skim_blockagnostic_outlierless <- skim_without_charts(sum_blockagnostic_outlierless)
+
+write_csv(
+  skim_blockagnostic_outlierless,
+  "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/analysis/skim_blockagnostic_outlierless.csv"
+)
+
+rt_se <- 0.104/sqrt(73)
+te_se <- 0.307/sqrt(73)
+ge_se <- 0.0243/sqrt(73)
+all_err_se <- 0.0325/sqrt(73)
+
+
+
 
 # now with all participants included -------------------------------------
 
