@@ -193,8 +193,11 @@ graph_ts |>
   ggplot() +
   stat_summary(
     aes(x = block, y = rt_mean),
-    fun = "mean", geom = "col", fill = "grey", colour = "grey"
+    fun = "mean", geom = "col", fill = "#949494", colour = "#949494"
     ) +
+  geom_line(
+    aes(group = sub, x = block, y = rt_mean),
+    alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   geom_point(
     aes(stroke = 1.1, colour = block, fill = block, group = sub, x = block, y = rt_mean),
     position = position_dodge(width = 0.5), shape = 21, size = 3.5
@@ -205,7 +208,6 @@ graph_ts |>
     ) +
   geom_errorbar(data = rt_cis, aes(x = block, ymin = cis_lower, ymax = cis_upper), color = "black", width = 0, size = 1.3)  +
   #stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
-  geom_line(aes(group = sub, x = block, y = rt_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   scale_fill_manual(values = rt_pal_fill) +
   scale_colour_manual(values = rt_pal_colour) +
   ylim(c(0, 1000)) +
@@ -220,7 +222,7 @@ graph_ts |>
     strip.background = element_rect(fill = "white", color = "white", linewidth = 0.5)
   ) +
   labs(
-    y = "RT (ms)"
+    y = "RT"
   )
 
 ggsave(
@@ -244,8 +246,9 @@ graph_ts |>
   ggplot() +
   stat_summary(
     aes(x = block, y = tj_mean),
-    fun = "mean", geom = "col", fill = "grey", colour = "grey"
+    fun = "mean", geom = "col", fill = "#949494", colour = "#949494"
     ) +
+  geom_line(aes(group = sub, x = block, y = tj_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   geom_point(
     aes(stroke = 1.1, colour = block, fill = block, group = sub, x = block, y = tj_mean),
     position = position_dodge(width = 0.5), shape = 21, size = 3.5
@@ -258,7 +261,6 @@ graph_ts |>
   #stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   scale_fill_manual(values = tj_pal_fill) +
   scale_colour_manual(values = tj_pal_colour) +
-  geom_line(aes(group = sub, x = block, y = tj_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   ylim(c(0, 3)) +
   plot_style() +
   theme(
@@ -296,8 +298,9 @@ graph_ts |>
   ggplot() +
   stat_summary(
     aes(x = block, y = ges_mean),
-    fun = "mean", geom = "col", fill = "grey", colour = "grey"
+    fun = "mean", geom = "col", fill = "#949494", colour = "#949494"
     ) +
+  geom_line(aes(group = sub, x = block, y = ges_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   geom_point(
     aes(stroke = 1.1, colour = block, fill = block, group = sub, x = block, y = ges_mean),
     position = position_dodge(width = 0.5), shape = 21, size = 3.5
@@ -310,7 +313,6 @@ graph_ts |>
   #stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
   scale_fill_manual(values = ge_pal_fill) +
   scale_colour_manual(values = ge_pal_colour) +
-  geom_line(aes(group = sub, x = block, y = ges_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   ylim(c(0, 0.3)) +
   plot_style() +
   theme(
