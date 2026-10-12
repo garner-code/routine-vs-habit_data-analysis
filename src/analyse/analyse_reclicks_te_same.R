@@ -16,9 +16,21 @@ split_by_block <- read_csv(
   na = c("", "NA")
 )
 
+averages <- read_csv(
+  "routine_vs_habit_avg.csv",
+  na = c("", "NA")
+)
+
 #make just st
-single_stay <- split_by_block |>
+single <- split_by_block |>
   filter(block == "st")
+
+#quickly get singletask RT data for join
+just_rt <- averages |>
+  filter(ses == 4, block == "st", switch == 0) |>
+  select(sub, rt_mean)
+
+single_stay <- left_join(single, just_rt)
 
 # correlation -------------------------------------------------------------
 
@@ -95,3 +107,44 @@ pear_cor_te_part <- with(TE_partialled, cor.test(r_re_by_te, r_err_by_te, method
 pear_cor_TE_part_trsf <- with(trsf_TE_partialled, cor.test(trsf_r_re_by_te, trsf_r_err_by_te, method = "pearson"))
 
 
+# model with RT -----------------------------------------------------------
+
+#quickly check a model with rt
+
+rt_mod1 <- lm(reclicks_mean ~ TE + errors_stay + rt_mean, data = single_stay)
+summary(rt_mod1)
+
+#partial out errors and rt
+
+rReclicks <- residuals(lm(reclicks_mean ~ errors_stay + rt_mean,  data = single_stay))
+rTE <- residuals(lm(TE ~ errors_stay + rt_mean, data = single_stay))
+
+rt_errors_partialled <- data.frame(rReclicks, rTE)
+write_csv(rt_errors_partialled, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/rt_errors_partialled.csv")
+
+#and get corrs
+
+with(rt_errors_partialled, cor(rReclicks, rTE, method = "pearson"))
+#-0.2308
+
+
+#get residuals for reclicks x errors graph
+rReclicks_tertmean <- residuals(lm(reclicks_mean ~ TE + rt_mean,  data = single_stay))
+rErrs_tertmean <- residuals(lm(errors_stay ~ TE + rt_mean, data = single_stay))
+
+rtpart_reclicks_x_errors <- data.frame(rReclicks_tertmean, rErrs_tertmean)
+write_csv(rtpart_reclicks_x_errors, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/rtpart_reclicks_x_errors.csv")
+
+with(rtpart_reclicks_x_errors, cor(rReclicks_tertmean, rErrs_tertmean, method = "pearson"))
+#-0.1424
+
+#get residuals for reclicks x rt graph
+
+rReclicks_teerrors <- residuals(lm(reclicks_mean ~ TE + errors_stay,  data = single_stay))
+rRTs_teerrors <-  residuals(lm(rt_mean ~ TE + errors_stay,  data = single_stay))
+
+rtpart_reclicks_x_rt <- data.frame(rReclicks_teerrors, rRTs_teerrors)
+write_csv(rtpart_reclicks_x_rt, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/rtpart_reclicks_x_rt.csv")
+
+with(rtpart_reclicks_x_rt, cor(rReclicks_teerrors, rRTs_teerrors, method = "pearson"))
+#-0.15977
