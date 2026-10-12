@@ -76,8 +76,8 @@ col_TE <- averages |>
 #colour "#424395FF", "#2C1769FF"
 
 
-pal_fill <- c("#FD646790", "#C9331290", "#90D4CC90","#0A9F9D90" )
-pal_colour <- c("#FD6467FF", "#C93312FF", "#90D4CCFF", "#0A9F9DFF")
+pal_fill <- c("#ff7f7f90", "#C9331290", "#90D4CC90","#0A9F9D90" )
+pal_colour <- c("#ff7f7fFF", "#C93312FF", "#90D4CCFF", "#0A9F9DFF")
 
 reclicks_pal_fill <- pal_fill[c(1, 2)]
 reclicks_pal_colour <- pal_colour[c(1, 2)]
@@ -319,8 +319,9 @@ col_reclicks |>
   ggplot() +
   stat_summary(
     aes(x = block, y = reclicks_mean),
-    fun = "mean", geom = "col", fill = "grey", colour = "grey"
+    fun = "mean", geom = "col", fill = "#949494", colour = "#949494"
     ) +
+  geom_line(aes(group = sub, x = block, y = reclicks_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   geom_point(
     aes(x = block, y = reclicks_mean, stroke = 1.1, colour = block, fill = block, group = sub),
     position = position_dodge(width = 0.5), shape = 21, size = 3.5
@@ -331,7 +332,6 @@ col_reclicks |>
     ) +
   geom_errorbar(data = reclicks_cis, aes(x = block, ymin = cis_lower, ymax = cis_upper), color = "black", width = 0, size = 1.3)  +
   #stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
-  geom_line(aes(group = sub, x = block, y = reclicks_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   scale_fill_manual(values = reclicks_pal_fill) +
   scale_colour_manual(values = reclicks_pal_colour) +
   ylim(0, 18) +
@@ -368,8 +368,9 @@ col_TE |>
   ggplot() +
   stat_summary(
     aes(x = block, y = TE_mean),
-    fun = "mean", geom = "col", fill = "grey", colour = "grey"
+    fun = "mean", geom = "col", fill = "#949494", colour = "#949494"
     ) +
+  geom_line(aes(group = sub, x = block, y = TE_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   geom_point(
     aes(stroke = 1.1, colour = block, fill = block, group = sub, x = block, y = TE_mean),
     position = position_dodge(width = 0.5), shape = 21, size = 3.5
@@ -380,7 +381,6 @@ col_TE |>
     ) +
   geom_errorbar(data = TE_cis, aes(x = block, ymin = cis_lower, ymax = cis_upper), color = "black", width = 0, size = 1.3)  +
   #stat_summary(geom = "errorbar", fun.data = mean_cl_boot, width = 0, size = 1.3) +
-  geom_line(aes(group = sub, x = block, y = TE_mean), alpha = 0.4, colour = "grey", position = position_dodge(width = 0.5)) +
   scale_fill_manual(values = TE_pal_fill) +
   scale_colour_manual(values = TE_pal_colour) +
   ylim(0, 1) +
