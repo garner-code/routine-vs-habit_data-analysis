@@ -122,3 +122,87 @@ summary(nothirty_rtcost)
 
 nothirty_tjcost <- lm(tj_cost ~ TE + reclicks_mean + ge_stay, data = no_thirty)
 summary(nothirty_tjcost)
+
+
+
+# get residuals and corrs for plotting ------------------------------------
+
+### PREDICT RT
+
+#rt x reclicks, holding TE and gen errors
+
+rReclicks_x_rt <- residuals(lm(reclicks_mean ~ TE + ge_stay,  data = perform_dat))
+rRT_x_reclicks <- residuals(lm(RT_cost ~ TE + ge_stay, data = perform_dat))
+
+rt_x_reclicks <- data.frame(rReclicks_x_rt, rRT_x_reclicks)
+
+write_csv(rt_x_reclicks, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/rt_x_reclicks.csv")
+
+with(rt_x_reclicks, cor(rReclicks_x_rt, rRT_x_reclicks))
+#-0.1535
+
+#rt x te holding reclicks and gen errors
+
+rTE_x_rt <- residuals(lm(TE ~ reclicks_mean + ge_stay,  data = perform_dat))
+rRT_x_TE <- residuals(lm(RT_cost ~ reclicks_mean + ge_stay, data = perform_dat))
+
+rt_x_TE <- data.frame(rTE_x_rt, rRT_x_TE)
+
+write_csv(rt_x_TE, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/rt_x_TE.csv")
+
+with(rt_x_TE, cor(rTE_x_rt, rRT_x_TE))
+#0.0303
+
+
+#rt x gen errs, holding reclicks and te
+
+rGen_x_rt <- residuals(lm(ge_stay ~ reclicks_mean + TE,  data = perform_dat))
+rRT_x_gen <- residuals(lm(RT_cost ~ reclicks_mean + TE, data = perform_dat))
+
+rt_x_gen <- data.frame(rGen_x_rt, rRT_x_gen)
+
+write_csv(rt_x_gen, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/rt_x_gen.csv")
+
+with(rt_x_gen, cor(rGen_x_rt, rRT_x_gen))
+#-0.0373
+
+### PREDICT TJs
+
+#tjs x reclicks, holding TE and gen errors
+
+rReclicks_x_TJ <- residuals(lm(reclicks_mean ~ TE + ge_stay,  data = perform_dat))
+rTJ_x_reclicks <- residuals(lm(tj_cost ~ TE + ge_stay, data = perform_dat))
+
+TJ_x_reclicks <- data.frame(rReclicks_x_TJ, rTJ_x_reclicks)
+
+write_csv(TJ_x_reclicks, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/TJ_x_reclicks.csv")
+
+with(TJ_x_reclicks, cor(rReclicks_x_TJ, rTJ_x_reclicks))
+#-0.0307
+
+
+#tjs x te holding reclicks and gen errors
+
+rTE_x_tj <- residuals(lm(TE ~ reclicks_mean + ge_stay,  data = perform_dat))
+rTJ_x_TE <- residuals(lm(tj_cost ~ reclicks_mean + ge_stay, data = perform_dat))
+
+TJ_x_TE <- data.frame(rTE_x_tj, rTJ_x_TE)
+
+write_csv(TJ_x_TE, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/TJ_x_TE.csv")
+
+with(TJ_x_TE, cor(rTE_x_tj, rTJ_x_TE))\
+#0.12865
+
+#tjs x gen errs, holding reclicks and te
+
+rGen_x_tj <- residuals(lm(ge_stay ~ reclicks_mean + TE,  data = perform_dat))
+rTJ_x_gen <- residuals(lm(tj_cost ~ reclicks_mean + TE, data = perform_dat))
+
+TJ_x_gen <- data.frame(rGen_x_tj, rTJ_x_gen)
+
+write_csv(TJ_x_gen, "C:/Users/Sadie/Repos/routine-vs-habit_data-analysis/res/TJ_x_gen.csv")
+
+with(TJ_x_gen, cor(rGen_x_tj, rTJ_x_gen))
+#0.23296
+
+
