@@ -66,6 +66,7 @@ rt_x_reclicks |>
     size = 4.3,
     x = 4,
     y = -160,
+    y = -150,
     fontface = "italic",
     label = "p = .201  \nr = -.154 \nβ = -0.006"
   ) +
@@ -101,6 +102,8 @@ rt_x_TE |>
     size = 4.3,
     x = -0.3,
     y = -160,
+    x = 0.42,
+    y = -150,
     fontface = "italic",
     label = "p = .802  \nr = .030  \nβ = -0.006"
   ) +
@@ -135,6 +138,7 @@ rt_x_gen |>
     size = 4.3,
     x = 0.075,
     y = -160,
+    y = -150,
     fontface = "italic",
     label = "p = .757  \nr = -.037  \nβ = -0.130"
   ) +
@@ -204,6 +208,7 @@ TJ_x_TE |>
     geom = "text",
     size = 4.3,
     x = -0.3,
+    x = 0.385,
     y = -0.4,
     fontface = "italic",
     label = "p = .285  \nr = .129  \nβ = 0.063"
