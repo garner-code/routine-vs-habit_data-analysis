@@ -229,7 +229,7 @@ task_load_rts <- grp_data %>%
   drop_na() %>%
   arrange(sub, ses, t, block, context, switch) %>%
   group_by(sub, ses, block, context, switch) %>%
-    mutate(mean_frst_rt = mean(rt, na.rm = TRUE),
+  mutate(mean_frst_rt = mean(rt, na.rm = TRUE),
          sd_frst_rt = sd(rt, na.rm = TRUE),
          frst_rt_cut_off = mean_frst_rt + sd_cut * sd_frst_rt,
          rt = ifelse(rt > frst_rt_cut_off, NA, rt)
@@ -258,8 +258,8 @@ write_csv(outlier_proportions_sw_rts, o_fn)
 task_rsp_rt_sum <-  task_load_rts %>%
   summarise(.by = c(sub, block, switch, context),
             frst_rt = mean(frst_rt, na.rm = TRUE)) %>%
-   summarise(.by = c(sub, block, switch),
-             mean_rt = mean(frst_rt, na.rm = TRUE))
+  summarise(.by = c(sub, block, switch),
+            mean_rt = mean(frst_rt, na.rm = TRUE))
 # now save the summary data of response times for first vs second responses on switch trials
 fnl <- file.path(project_path, "res", paste(paste(sv_name, "sw_frst-scnd_stvmt_avg", sep = "_"), ".csv", sep = ""))
 write_csv(task_rsp_rt_sum, fnl)
